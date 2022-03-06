@@ -25,7 +25,7 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
   if(nrow(counts_t)>1){
     dist_matrix <- dist(counts_t)
     dist_matrix[is.na(dist_matrix)] <- 0
-    hc_counts <- hclust(dist_matrix)
+    hc_counts <- hclust(dist_matrix, method = "ward.D")
     ord <- hc_counts$order
     dhc <- stats::as.dendrogram(hc_counts)
     ddata <- ggdendro::dendro_data(dhc, type = "rectangle")
