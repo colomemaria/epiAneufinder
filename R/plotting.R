@@ -13,7 +13,7 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
   qc_dt$libsize <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], sum)
   print(dim(qc_dt))
   somies.dt <- as.data.table(somies_ad)
-  write.table(somies.dt, file = file.path(outdir, results_table.tsv), quote = FALSE)
+  write.table(somies.dt, file = file.path(outdir, "results_table.tsv"), quote = FALSE)
   print(dim(somies.dt))
   # somies.dt <- as.data.table(lapply(somies.dt, function(x) {scale(x, center=TRUE, scale=TRUE)}))
   qc_dt$name <- colnames(somies.dt)
