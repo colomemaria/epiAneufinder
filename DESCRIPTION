@@ -29,6 +29,7 @@ Depends:
     BiocGenerics,
     S4Vectors,
     ggplot2,
+    ggdendro,
     cowplot,
     parallel
 Imports: 
@@ -49,4 +50,5 @@ Imports:
     ggplot2,
     cowplot,
     parallel,
+    ggdendro,
     R.utils
