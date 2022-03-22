@@ -77,9 +77,9 @@ command to run if program contains helper info
 
 Contributors names and contact info
 
-Akshaya Ramakrishnan 
-Aikaterini Symeonidi
-Patrick Hanel
+Akshaya Ramakrishnan  
+Aikaterini Symeonidi  
+Patrick Hanel  
 Michael Schubert  
 Maria Colomé-Tatché
 
