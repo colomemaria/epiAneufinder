@@ -3,6 +3,7 @@
 #' @param somies_ad A list containing the somy per bin of each cell
 #' @param outdir Directory where the output karyogram is to be saved
 #' @param peaks Dataframe containing bin information
+
 plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, title_karyo=NULL){
   qc_dt <- data.table()
   qc_dt$spikiness <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], qc.spikiness)
@@ -11,12 +12,10 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
     qc.sos(counts,somies)
   }, peaks[, .SD, .SDcols = patterns("cell-")], somies_ad))
   qc_dt$libsize <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], sum)
-  print(dim(qc_dt))
   somies.dt <- as.data.table(somies_ad)
-  write.table(somies.dt, file = file.path(outdir, "results_table.tsv"), quote = FALSE)
-  print(dim(somies.dt))
   # somies.dt <- as.data.table(lapply(somies.dt, function(x) {scale(x, center=TRUE, scale=TRUE)}))
   qc_dt$name <- colnames(somies.dt)
+  ## Plotting function
   somies.dt$seqnames <- peaks$seqnames
   somies.dt$rn <- as.numeric(rownames(somies.dt))
   somies_melted <- melt(somies.dt, id.vars=c('rn','seqnames'))
@@ -52,6 +51,10 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
 
   karyoname <- paste0("Karyogram.png")
   outkaryo <- file.path(outdir, karyoname)
-
-  ggsave(outkaryo, ggsomy, width = 30, height=20, units = "in")
+  if(nrow(counts_t)>1) {
+    combiplot <- cowplot::plotgrid(list(ggdndr, ggsomy), ncol = 2, rel_widths = c(0.2,1))
+    ggsave(outkaryo, combiplot, width = 36, height=20, units = "in")
+  } else {
+    ggsave(outkaryo, ggsomy, width = 30, height=20, units = "in")
+  }
 }

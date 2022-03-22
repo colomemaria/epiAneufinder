@@ -1,5 +1,6 @@
 #' @export
 
+# Function to calculate the AD statistic between two distributions
 dist_ad <- function(x, y, test='AD'){
   if(test=='AD'){
     x <- as.numeric(x); y <- as.numeric(y)
@@ -39,7 +40,7 @@ dist_ad <- function(x, y, test='AD'){
   }
 }
 
-
+# Function to calculate the breakpoints with AD stat given a series of datapoints
 seq_dist_ad <- function(seq_data, minsize=3, test='AD') {
   bp1 <- seq(from = 1, to = length(seq_data), by = minsize)
   distlist <- vector()
