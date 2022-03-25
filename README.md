@@ -38,18 +38,18 @@ epiAneufinder is an R package
 
 The easiest way to install epiAneufinder is through conda.
 Installation example:
-1. Create a conda enviroment and install R and devtools
+Optionally: Create a conda enviroment and install R and devtools
 ```
 conda create -n epianeufinder r-base r-essentials r-devtools
 ```
-2. Start R and install dependencies
+1. Start R and install dependencies
 ```
 install.packages(c("BiocManager", "ggdendro"))
 ```
 ```
 BiocManager::install(c("GenomicAlignments", "SummarizedExperiment", "plyranges", "Rsamtools", "GenomeInfoDb", "BSgenome.Hsapiens.UCSC.hg38", "GenomicRanges", "Biostrings", "BiocGenerics", "S4Vectors", "GenomicFeatures"))
 ```
-3. Load devtools and install the epiAneufinder package
+2. Load devtools and install the epiAneufinder package
 ```
 library(devtools)
 install_github("colomemaria/epiAneufinder")
