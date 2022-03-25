@@ -38,7 +38,7 @@ epiAneufinder is an R package
 
 The easiest way to install epiAneufinder is through conda.
 Installation example:
-Optionally: Create a conda enviroment and install R and devtools
+*Create a conda enviroment and install R and devtools (optionally)
 ```
 conda create -n epianeufinder r-base r-essentials r-devtools
 ```
