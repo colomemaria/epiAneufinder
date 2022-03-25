@@ -39,7 +39,7 @@ epiAneufinder is an R package
 Installation example:  
 *Create a conda enviroment and install R and devtools (optionally)
 ```
-conda create -n epianeufinder r-base r-essentials r-devtools
+conda create -n epianeufinder r-base r-essentials
 ```
 1. Start R and install dependencies
 ```
