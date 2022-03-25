@@ -43,7 +43,7 @@ conda create -n epianeufinder r-base r-essentials r-devtools
 ```
 1. Start R and install dependencies
 ```
-install.packages(c("BiocManager", "ggdendro"))
+install.packages(c("devtools", "BiocManager", "ggdendro"))
 ```
 ```
 BiocManager::install(c("GenomicAlignments", "SummarizedExperiment", "plyranges", "Rsamtools", "GenomeInfoDb", "BSgenome.Hsapiens.UCSC.hg38", "GenomicRanges", "Biostrings", "BiocGenerics", "S4Vectors", "GenomicFeatures"))
