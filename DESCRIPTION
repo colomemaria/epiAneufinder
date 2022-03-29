@@ -1,4 +1,4 @@
-Package: atacCNV
+Package: epiAneufinder
 Type: Package
 Title: Calling copy numbers from scATAC-seq data
 Version: 0.1.0
