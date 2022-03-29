@@ -13,7 +13,7 @@ library(epiAneufinder)
 input <- "/storage/groups/ce01/workspace/Katia_Workspace/epiAneufinder/subsampling_SNU/0.1/fragments.tsv"
 
 #Location of the output directory. If the directory does not exist it will be created
-outdir <- "/storage/groups/ce01/workspace/Katia_Workspace/epiAneufinder/results/testing"
+outdir <- getwd()
 
 #Genome to use for the analysis. The genome should be already inatalled in R. In this example we use the UCSC hg38 genome from Bioconductor
 genome <- "BSgenome.Hsapiens.UCSC.hg38"
@@ -26,7 +26,7 @@ exclude <- c('chrX','chrY','chrM')
 gene.annotation <- NULL
 
 #Bed file with the blacklisted regions of the genome. This file is genome-version specific and it should be downloaded by the user
-blacklist <- "/home/icb/akshaya.ramakrishnan/storage/workspace/scATAC_CNV/hg38.blacklist.bed"
+blacklist <- "hg38.blacklist.bed"
 
 #Window size for partitioning the genome. Smaller window sizes will result in longer running times. Default is 1e5
 windowSize <- 1e5
@@ -46,7 +46,7 @@ uq=0.9
 lq=0.1
 
 #Title for the karyotype plot. Default is NULL
-title_karyo="minsize 5"
+title_karyo="Karyoplot"
 
 #Number of cores to use for the analysis. Default is 4
 ncores=4
