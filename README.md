@@ -35,7 +35,7 @@ epiAneufinder is an R package
 ### Installing
 
 Installation example:  
-*Create a conda enviroment and install R and devtools (optionally)
+*OPTIONAL: Create a conda enviroment and install R and devtools
 ```
 conda create -n epianeufinder r-base r-essentials
 ```
@@ -51,13 +51,13 @@ BiocManager::install(c("GenomicAlignments", "SummarizedExperiment", "plyranges",
 library(devtools)
 install_github("colomemaria/epiAneufinder")
 ```
-The user should also download the blacklisted regions of the hg38 and update accordingly the parameter in the wrapper script.
-By default, the genome version to be used is the hg38. If there is another genome, it should be installed by the user, along with the corresponding blacklisted regions.
+The user should also download the blacklisted regions of the hg38 genome and update accordingly the parameter in the wrapper script.
+By default, the genome version to be used is the hg38. If there is another genome/species that needs to be used, it should be installed by the user, along with the corresponding blacklisted regions.
 
 ### Executing program
 
-We provide a wrapper script to be used.
-Once the user has updated the parameters that wants to change, the wrapper can be called from console with the following command:
+We provide a wrapper script to be used (epiAneufinder_wrapper.R). The user needs to update the name of the input data folder on the wrapper, and may also change any of the parameters of the algorithm if needed. 
+Once the user has updated the parameters on the wrapper, the wrapper can be called from console with the following command:
 
 ```
 Rscript epiAneufinder_wrapper.R
@@ -65,17 +65,17 @@ Rscript epiAneufinder_wrapper.R
 
 ## Help
 
-Any advise for common problems or issues.
+
 
 ## Authors
 
 Contributors names and contact info
 
-Akshaya Ramakrishnan  
-Aikaterini Symeonidi  
-Patrick Hanel  
+Akshaya Ramakrishnan (akshaya4r@gmail.com)
+Aikaterini Symeonidi (aikaterini.symeonidi@helmholtz-muenchen.de) 
+Patrick Hanel (patrick.hanel@helmholtz-muenchen.de) 
 Michael Schubert  
-Maria Colomé-Tatché
+Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 ## Version History
 
@@ -84,7 +84,7 @@ Maria Colomé-Tatché
 
 ## License
 
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
+This project is licensed under the GNU General Public License v3.0 - see the LICENSE.md file for details
 
 ## Acknowledgments
 
