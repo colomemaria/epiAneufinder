@@ -56,7 +56,21 @@ By default, the genome version to be used is the hg38. If there is another genom
 
 ### Executing program
 
-We provide a wrapper script to be used (epiAneufinder_wrapper.R). 
+```
+library(epiAneufinder)
+epiAneufinder::epiAneufinder(input="sample.tsv", #Enter path to your fragments.tsv file or the folder containing bam files
+                             outdir="epiAneufinder_results", #Path to the directory where results should be written 
+                             blacklist="blacklist.bed", #Path to bed file that contains the blacklisted regions of your genome
+                             windowSize=1e5, 
+                             genome="BSgenome.Hsapiens.UCSC.hg38", #Substitute with relevant BSgenome
+                             exclude=c('chrX','chrY','chrM'), 
+                             reuse.existing=TRUE,
+                             title_karyo="Karyogram of sample data", 
+                             ncores=4,
+                             minFrags=20000)
+```
+
+We also provide a wrapper script to be used (epiAneufinder_wrapper.R). 
 
 The user needs to update the path/name of the input data folder, as well as the path/name of the blacklisted regions to use on the wrapper. Test data and the hg38 blacklisted regions can be found in the sample_data folder. 
 
