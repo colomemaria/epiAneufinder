@@ -10,7 +10,7 @@ The algorithm works in three steps:
 2. Genome segmentation based on maximum Anderson-Darling distance
 3. Gain/loss assignments
 
-## Getting Started
+### Getting Started
 
 epiAneufinder is an R package
 
@@ -31,7 +31,7 @@ epiAneufinder is an R package
 * GenomicFeatures
 * ggdendro
 
-### Installing
+### Installation
 
 Installation example:  
 *OPTIONAL: Create a conda enviroment and install R and devtools
