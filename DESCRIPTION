@@ -5,7 +5,6 @@ Version: 0.1.0
 Author: Akshaya Ramakrishnan
 Maintainer: The package maintainer <akshaya4r@gmail.com>
 Description: Package to detect breakpoints and assign somies to scATAC-seq data.
-    Also supports other single cell sequencing data.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
