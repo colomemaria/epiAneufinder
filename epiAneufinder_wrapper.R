@@ -15,7 +15,7 @@ input <- "input here the directory/tsv name with the input data" #path to folder
 # Location of the output directory. If the directory does not exist it will be created
 outdir <- "epiAneufinder_results"
 
-#Genome to use for the analysis. The genome should be already inatalled in R. In this example we use the UCSC hg38 genome from Bioconductor
+#BSgenome to use for the analysis. The genome should be already installed in R. In this example we use the UCSC hg38 genome from Bioconductor
 genome <- "BSgenome.Hsapiens.UCSC.hg38"
 
 #Chromosomes to be excluded from the analysis. The chromosome names should follow the naming of the genome version used. In this example we have UCSC chromosome names
