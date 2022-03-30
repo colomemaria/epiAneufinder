@@ -23,7 +23,7 @@ genome <- "BSgenome.Hsapiens.UCSC.hg38"
 exclude <- c('chrX','chrY','chrM')
 
 #Bed file with the blacklisted regions of the genome. This file is genome-version specific and it should be downloaded by the user
-blacklist <- "input here "path/blacklist_name.bed". hg38.blacklist.bed can be downloaded from the sample_data folder" #Path and file name of the blacklisted regions in bed format. If you use hg38 genome then the blacklisted regions can be found in the sample_data folder.
+blacklist <- "input here path/blacklist_name.bed. hg38.blacklist.bed can be downloaded from the sample_data folder" #Path and file name of the blacklisted regions in bed format. If you use hg38 genome then the blacklisted regions can be found in the sample_data folder.
 
 #Window size for partitioning the genome. Smaller window sizes will result in longer running times. Default is 1e5
 windowSize <- 1e5
