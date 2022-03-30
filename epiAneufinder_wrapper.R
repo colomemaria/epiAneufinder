@@ -22,17 +22,11 @@ genome <- "BSgenome.Hsapiens.UCSC.hg38"
 #Default is NULL
 exclude <- c('chrX','chrY','chrM')
 
-#Whether to use gene annotation (Depricated)
-gene.annotation <- NULL
-
 #Bed file with the blacklisted regions of the genome. This file is genome-version specific and it should be downloaded by the user
-blacklist <- "hg38.blacklist.bed"
+blacklist <- "input here "path/blacklist_name.bed". hg38.blacklist.bed can be downloaded from the sample_data folder"
 
 #Window size for partitioning the genome. Smaller window sizes will result in longer running times. Default is 1e5
 windowSize <- 1e5
-
-#Type of data to use. The default is "ATAC". Alternatively, can be "BS" for methylation data
-readout <- "ATAC"
 
 #Parameter to instruct epiAneufinder to resume from a previous run. Can be set to either True or False
 #If certain parameters change, for example minsize, resuming may end in error messages. In such a case change the parameter to False 
@@ -63,13 +57,6 @@ minsize=5
 
 #Number of segments per chromosomes (2^k). Default value is 3
 k=3
-
-#Type of distance metric. Can be either "AD" for Anderson-Dalring or "KS" for Kolmogorov-Smirnov. Default is "AD"
-test="AD"
-
-#Parameters similar to ld and uq, but for "BS" data. Defaults are 01. for somyl and 0.8 for 0.1
-somyl=0.1 
-somyu=0.8
 
 
 dir.create(outdir)
