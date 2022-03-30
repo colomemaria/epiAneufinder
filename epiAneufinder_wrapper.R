@@ -10,7 +10,7 @@ library(epiAneufinder)
 #library(genome-version)
 
 #Location of the input data. Can be a single fragments tsv file of a folder containing multiple bam files
-input <- "input here the directory/tsv name with the input data" #path to folder containing BAM files /or/ path+file_name for a TSV fragments file
+input <- "input here the directory/tsv name with the input data" #path to folder containing BAM files /or/ path+file_name for a TSV fragments file. If you want to test the package, sample data can be downloaded from the sample_data folder.
 
 # Location of the output directory. If the directory does not exist it will be created
 outdir <- "epiAneufinder_results"
