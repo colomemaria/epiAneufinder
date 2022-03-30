@@ -12,8 +12,8 @@ library(epiAneufinder)
 #Location of the input data. Can be a single fragments tsv file of a folder containing multiple bam files
 input <- "input here the directory with the input data" #Path to the TSV fragments file / folder containing BAM files
 
-#Location of the output directory. If the directory does not exist it will be created
-outdir <- getwd()
+# Location of the output directory. If the directory does not exist it will be created
+outdir <- "epiAneufinder_results"
 
 #Genome to use for the analysis. The genome should be already inatalled in R. In this example we use the UCSC hg38 genome from Bioconductor
 genome <- "BSgenome.Hsapiens.UCSC.hg38"
