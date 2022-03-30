@@ -35,7 +35,7 @@ epiAneufinder is an R package
 ### Installing
 
 Installation example:  
-*Create a conda enviroment and install R and devtools (optionally)
+*OPTIONAL: Create a conda enviroment and install R and devtools
 ```
 conda create -n epianeufinder r-base r-essentials
 ```
@@ -65,17 +65,17 @@ Rscript epiAneufinder_wrapper.R
 
 ## Help
 
-Any advise for common problems or issues.
+
 
 ## Authors
 
 Contributors names and contact info
 
-Akshaya Ramakrishnan  
-Aikaterini Symeonidi  
-Patrick Hanel  
+Akshaya Ramakrishnan (akshaya4r@gmail.com)
+Aikaterini Symeonidi (aikaterini.symeonidi@helmholtz-muenchen.de) 
+Patrick Hanel (patrick.hanel@helmholtz-muenchen.de) 
 Michael Schubert  
-Maria Colomé-Tatché
+Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 ## Version History
 
@@ -84,7 +84,7 @@ Maria Colomé-Tatché
 
 ## License
 
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
+This project is licensed under the GNU General Public License v3.0 - see the LICENSE.md file for details
 
 ## Acknowledgments
 
