@@ -10,7 +10,7 @@ library(epiAneufinder)
 #library(genome-version)
 
 #Location of the input data. Can be a single fragments tsv file of a folder containing multiple bam files
-input <- "/storage/groups/ce01/workspace/Katia_Workspace/epiAneufinder/subsampling_SNU/0.1/fragments.tsv"
+input <- getwd() #Path to the TSV fragments file / folder containing BAM files
 
 #Location of the output directory. If the directory does not exist it will be created
 outdir <- getwd()
