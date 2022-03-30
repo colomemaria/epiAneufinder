@@ -52,7 +52,7 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
   karyoname <- paste0("Karyogram.png")
   outkaryo <- file.path(outdir, karyoname)
   if(nrow(counts_t)>1) {
-    combiplot <- cowplot::plotgrid(list(ggdndr, ggsomy), ncol = 2, rel_widths = c(0.2,1))
+    combiplot <- cowplot::plot_grid(list(ggdndr, ggsomy), ncol = 2, rel_widths = c(0.2,1))
     ggsave(outkaryo, combiplot, width = 36, height=20, units = "in")
   } else {
     ggsave(outkaryo, ggsomy, width = 30, height=20, units = "in")
