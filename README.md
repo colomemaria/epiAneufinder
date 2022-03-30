@@ -57,11 +57,11 @@ By default, the genome version to be used is the hg38. If there is another genom
 ### Executing program
 
 We provide a wrapper script to be used (epiAneufinder_wrapper.R). 
-```
+
 The user needs to update the path/name of the input data folder, as well as the path/name of the blacklisted regions to use on the wrapper. Test data and the hg38 blacklisted regions can be found in the sample_data folder. 
-```
+
 The user may also change on the wrapper any of the parameters of the algorithm, if needed. 
-```
+
 Once the user has updated the parameters on the wrapper, the wrapper can be called from console with the following command:
 
 ```
