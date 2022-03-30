@@ -42,8 +42,6 @@ conda create -n epianeufinder r-base r-essentials
 1. Start R and install dependencies
 ```
 install.packages(c("devtools", "BiocManager", "ggdendro"))
-```
-```
 BiocManager::install(c("GenomicAlignments", "SummarizedExperiment", "plyranges", "Rsamtools", "GenomeInfoDb", "BSgenome.Hsapiens.UCSC.hg38", "GenomicRanges", "Biostrings", "BiocGenerics", "S4Vectors", "GenomicFeatures"))
 ```
 2. Load devtools and install the epiAneufinder package
@@ -51,7 +49,7 @@ BiocManager::install(c("GenomicAlignments", "SummarizedExperiment", "plyranges",
 library(devtools)
 install_github("colomemaria/epiAneufinder")
 ```
-The user should also download the blacklisted regions of the hg38 genome and update accordingly the parameter in the wrapper script.
+The user should also download the blacklisted regions of the hg38 genome and update the parameter accordingly.
 By default, the genome version to be used is the hg38. If there is another genome/species that needs to be used, it should be installed by the user, along with the corresponding blacklisted regions.
 
 ### Executing program
