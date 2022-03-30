@@ -9,7 +9,7 @@ library(epiAneufinder)
 #Uncomment the following line and add the corresponding R library
 #library(genome-version)
 
-#Location of the input data. Can be a single fragments tsv file of a folder containing multiple bam files
+#Location of the input data. Can be a single fragments tsv file or a folder containing multiple bam files
 input <- "input here the directory/tsv name with the input data" #path to folder containing BAM files /or/ path+file_name for a TSV fragments file. If you want to test the package, sample data can be downloaded from the sample_data folder.
 
 # Location of the output directory. If the directory does not exist it will be created
@@ -58,6 +58,18 @@ minsize=5
 #Number of segments per chromosomes (2^k). Default value is 3
 k=3
 
-
 dir.create(outdir)
-epiAneufinder::epiAneufinder(input=input, outdir=outdir, blacklist=blacklist, windowSize=windowSize, genome=genome, exclude=exclude, reuse.existing=reuse.existing, uq=uq, lq=lq, title_karyo=title_karyo, readout=readout, gene.annotation=gene.annotation, ncores=ncores,test=test,minFrags=minFrags,minsize=minsize,k=k,threshold_blacklist_bins=threshold_blacklist_bins)
+epiAneufinder::epiAneufinder(input=input, 
+                             outdir=outdir, 
+                             blacklist=blacklist, 
+                             windowSize=windowSize, 
+                             genome=genome, 
+                             exclude=exclude, 
+                             reuse.existing=reuse.existing, 
+                             uq=uq, lq=lq, 
+                             title_karyo=title_karyo, 
+                             ncores=ncores,
+                             minFrags=minFrags,
+                             minsize=minsize,
+                             k=k,
+                             threshold_blacklist_bins=threshold_blacklist_bins)
