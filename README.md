@@ -79,11 +79,11 @@ Once the user has updated the parameters on the wrapper, the wrapper can be call
 Rscript epiAneufinder_wrapper.R
 ```
 
-## Help
+### Help
 
 
 
-## Authors
+### Authors
 
 Contributors names and contact info
 
@@ -97,15 +97,15 @@ Michael Schubert
 
 Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
-## Version History
+### Version History
 
 * 0.1
     * Initial Release
 
-## License
+### License
 
 This project is licensed under the GNU General Public License v3.0 - see the LICENSE.md file for details
 
-## Acknowledgments
+### Acknowledgments
 
 
