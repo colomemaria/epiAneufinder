@@ -45,6 +45,9 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   
   outdir <- file.path(outdir, "epiAneufinder_results")
   dir.create(outdir)
+  setwd(file.path(outdir))
+  wd <- getwd()
+  print(paste0("Current working dir: ", wd))
   
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
