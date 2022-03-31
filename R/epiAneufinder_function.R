@@ -44,7 +44,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
                     threshold_blacklist_bins=0.85, ncores=4, minsize=1, k=3){
 
   outdir <- file.path(outdir, "epiAneufinder_results")
-  dir.create(outdir)
+  dir.create(outdir,recursive=TRUE)
   
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
