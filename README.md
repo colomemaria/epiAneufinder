@@ -14,23 +14,6 @@ The algorithm works in three steps:
 
 epiAneufinder is an R package
 
-### Dependencies
-
-* devtools
-* BiocManager
-* GenomicAlignments 
-* SummarizedExperiment 
-* plyranges
-* Rsamtools
-* GenomeInfoDb
-* BSgenome.Hsapiens.UCSC.hg38
-* GenomicRanges
-* Biostrings
-* BiocGenerics
-* S4Vectors
-* GenomicFeatures
-* ggdendro
-
 ### Installation
 
 Installation example:  
