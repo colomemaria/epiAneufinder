@@ -53,7 +53,7 @@ threshold_blacklist_bins=0.85
 
 #Parameter on how many breakpoins to use for the CNV calculation. Default is 1, all breakpoints. If higher than one, the algorithm will calculate every n breakpoints
 #Setting it to higher than 1 speeds the process with lower resolution as a result
-minsize=5
+minsize=1
 
 #Number of segments per chromosomes (2^k). Default value is 3
 k=3
