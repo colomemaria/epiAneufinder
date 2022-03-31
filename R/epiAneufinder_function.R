@@ -45,7 +45,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
 
   outdir <- file.path(outdir, "epiAneufinder_results")
   print(paste0(outdir))
-  lapply(outdir, function(x) if(!dir.exists(x)) dir.create(x))
+  lapply(outdir, function(x) if(!dir.exists(x)) dir.create(x, recursive = TRUE))
   #dir.create(outdir)
   #setwd(file.path(outdir))
   #wd <- getwd()
