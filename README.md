@@ -34,6 +34,10 @@ install_github("colomemaria/epiAneufinder")
 The user should also download the blacklisted regions of the hg38 genome and update the parameter accordingly.
 By default, the genome version to be used is the hg38. If there is another genome/species that needs to be used, it should be installed by the user, along with the corresponding blacklisted regions.
 
+epiAneufinder has been extensovely tested for the following version of dependencies:
+GenomicAlignments v1.28.0, SummarizedExperiment v1.22.0, plyranges v1.12.1, Rsamtools v2.8.0, GenomeInfoDb v1.28.4, BSgenome.Hsapiens.UCSC.hg38 v1.4.3, GenomicRanges v1.44.0, Biostrings v2.60.2, BiocGenerics v0.38.0, S4Vectors v0.30.0, GenomicFeatures v1.44.2, devtools v2.4.3, BiocManager v1.30.16 and ggdendro v0.1.22.
+
+
 The installation process of epiAneufinder, in a prepared enviroment (all dependencies already installed), takes approximatelly 3 minutes.
 
 The software has been tested for Linux and MacOS. 
