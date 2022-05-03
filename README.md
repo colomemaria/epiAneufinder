@@ -34,6 +34,10 @@ install_github("colomemaria/epiAneufinder")
 The user should also download the blacklisted regions of the hg38 genome and update the parameter accordingly.
 By default, the genome version to be used is the hg38. If there is another genome/species that needs to be used, it should be installed by the user, along with the corresponding blacklisted regions.
 
+The installation process of epiAneufinder, in a prepared enviroment (all dependencies already installed), takes approximatelly 3 minutes.
+
+The software has been tested for Linux and MacOS. 
+
 ### Executing program
 
 ```
@@ -61,6 +65,8 @@ Once the user has updated the parameters on the wrapper, the wrapper can be call
 ```
 Rscript epiAneufinder_wrapper.R
 ```
+
+Depending on the available resources, running the demo shouldn't take more than 15 minutes. Tested in a typical desktop, running time was 7.34 minutes with 6Gb of RAM used. 
 
 ### Help
 
