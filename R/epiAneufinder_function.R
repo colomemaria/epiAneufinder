@@ -16,6 +16,7 @@
 #' @param ncores Number of cores for parallelization. Default: 4
 #' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
 #' @param k Integer. Find 2^k segments per chromosome
+#' @param minsizeCNV Integer. Number of consecutive bins to constitute a possible CNV
 #' @import stats
 #' @import GenomicRanges
 #' @import plyranges
@@ -41,7 +42,7 @@
 epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL,
                     uq=0.9, lq=0.1, title_karyo=NULL, minFrags = 20000,
-                    threshold_blacklist_bins=0.85, ncores=4, minsize=1, k=3){
+                    threshold_blacklist_bins=0.85, ncores=4, minsize=1, k=3, minsizeCNV=5){
 
   outdir <- file.path(outdir, "epiAneufinder_results")
   dir.create(outdir,recursive=TRUE)
@@ -112,7 +113,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       peaksperchrom <- split(x, peaks$seqnames)
       print("Calculating distance AD")
       results <- lapply(peaksperchrom, function(x2) {
-        getbp(x2, k = k, minsize = minsize, test=test)
+        getbp(x2, k = k, minsize = minsize, test=test,minsizeCNV=minsizeCNV)
       })
     }, mc.cores = ncores), .SDcols = patterns("cell-")]
     saveRDS(clusters_ad, file.path(outdir, "results_gc_corrected.rds"))
