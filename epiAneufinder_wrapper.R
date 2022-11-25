@@ -56,7 +56,10 @@ threshold_blacklist_bins=0.85
 minsize=1
 
 #Number of segments per chromosomes (2^k). Default value is 3
-k=3
+k=4
+
+#Number of consecutive bins to constitute a CNV
+minsizeCNV=0
 
 dir.create(outdir)
 epiAneufinder::epiAneufinder(input=input, 
@@ -72,4 +75,5 @@ epiAneufinder::epiAneufinder(input=input,
                              minFrags=minFrags,
                              minsize=minsize,
                              k=k,
-                             threshold_blacklist_bins=threshold_blacklist_bins)
+                             threshold_blacklist_bins=threshold_blacklist_bins,
+                             minsizeCNV=minsizeCNV)
