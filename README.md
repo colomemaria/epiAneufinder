@@ -5,6 +5,8 @@ Single-cell open chromatin profiling via the single-cell Assay for Transposase-A
 
 Ramakrishnan, A., Symeonidi, A., Hanel, P. et al. epiAneufinder identifies copy number alterations from single-cell ATAC-seq data. Nat Commun 14, 5846 (2023). https://doi.org/10.1038/s41467-023-41076-1
 
+All additional scripts used for the publication can be found here https://github.com/colomemaria/epiAneufinder_analyses.git
+
 ### Description
 
 The algorithm works in three steps:
