@@ -1,7 +1,9 @@
-# epiAneufinder: Identifying copy number variations from single-cell ATAC-seq data
+# epiAneufinder: Identifying copy number alterations from single-cell ATAC-seq data
 
 epiAneufinder is an algorithm used for calling Copy Number Variations (CNVs) from single-cell ATAC (scATAC) data.
 Single-cell open chromatin profiling via the single-cell Assay for Transposase-Accessible Chromatin using sequencing (scATAC-seq) assay has become a mainstream measurement of open chromatin in single-cells. epiAneufinder exploits the read count information from scATAC-seq data to extract genome-wide copy number variations (CNVs) for each individual cell. epiAneufinder allows the addition of single-cell CNV information to scATAC-seq data, without the need of additional experiments, unlocking a layer of genomic variation which is otherwise unexplored. 
+
+Ramakrishnan, A., Symeonidi, A., Hanel, P. et al. epiAneufinder identifies copy number alterations from single-cell ATAC-seq data. Nat Commun 14, 5846 (2023). https://doi.org/10.1038/s41467-023-41076-1
 
 ### Description
 
@@ -72,10 +74,6 @@ Rscript epiAneufinder_wrapper.R
 
 Depending on the available resources, running the demo shouldn't take more than 15 minutes. Tested in a typical desktop, running time was 7.34 minutes with 6Gb of RAM used. 
 
-### Help
-
-
-
 ### Authors
 
 Contributors names and contact info
@@ -85,6 +83,10 @@ Akshaya Ramakrishnan (akshaya4r@gmail.com)
 Aikaterini Symeonidi (aikaterini.symeonidi@helmholtz-muenchen.de) 
 
 Patrick Hanel (patrick.hanel@helmholtz-muenchen.de) 
+
+Katharina Schmid (katharina.schmid@bmc.med.lmu.de)
+
+Maria Richter (maria.richter@bmc.med.lmu.de)
 
 Michael Schubert  
 
@@ -98,7 +100,5 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 ### License
 
 This project is licensed under the GNU General Public License v3.0 - see the LICENSE.md file for details
-
-### Acknowledgments
 
 
