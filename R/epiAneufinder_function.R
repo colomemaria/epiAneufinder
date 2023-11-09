@@ -17,6 +17,7 @@
 #' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
 #' @param k Integer. Find 2^k segments per chromosome
 #' @param minsizeCNV Integer. Number of consecutive bins to constitute a possible CNV
+#' @param plotKaryo Boolean variable. Whether the final karyogram is plotted at the end
 #' @import stats
 #' @import GenomicRanges
 #' @import plyranges
@@ -42,7 +43,8 @@
 epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL,
                     uq=0.9, lq=0.1, title_karyo=NULL, minFrags = 20000,
-                    threshold_blacklist_bins=0.85, ncores=4, minsize=1, k=3, minsizeCNV=5){
+                    threshold_blacklist_bins=0.85, ncores=4, minsize=1, k=3, 
+                    minsizeCNV=5,plotKaryo=TRUE){
 
   outdir <- file.path(outdir, "epiAneufinder_results")
   dir.create(outdir,recursive=TRUE)
@@ -194,10 +196,12 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   message("A .tsv file with the results has been written to disk. It contains the copy number states for each cell per bin.
           0 denotes 'Loss', 1 denotes 'Normal', 2 denotes 'Gain'.")
   
-  if(is.null(title_karyo)){
-    title_karyo <- basename(outdir)
+  if(plotKaryo){
+    if(is.null(title_karyo)){
+      title_karyo <- basename(outdir)
+    }
+    # Call plotting function to plot and save karyogram
+    plot_karyo_gainloss(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, title_karyo)
+    print("Successfully plotted karyogram")
   }
-  # Call plotting function to plot and save karyogram
-  plot_karyo_gainloss(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, title_karyo)
-  print("Successfully plotted karyogram")
 }

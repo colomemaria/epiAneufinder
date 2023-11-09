@@ -21,7 +21,8 @@ epiAneufinder(
   ncores = 4,
   minsize = 1,
   k = 3,
-  minsizeCNV = 5
+  minsizeCNV = 5,
+  plotKaryo = TRUE
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ epiAneufinder(
 \item{k}{Integer. Find 2^k segments per chromosome}
 
 \item{minsizeCNV}{Integer. Number of consecutive bins to constitute a possible CNV}
+
+\item{plotKaryo}{Boolean variable. Whether the final karyogram is plotted at the end}
 }
 \value{
 \code{NULL}
