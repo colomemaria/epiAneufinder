@@ -1,8 +1,10 @@
-#' @export
+#' Create windows (=bins) over the complete genome
+#' 
 #' @param genome String containing name of BS.genome object. Necessary for GC correction. Default: "BSgenome.Hsapiens.UCSC.hg38"
 #' @param blacklist Granges object with information about blacklisted regions in the genome.
 #' @param windowSize Size in basepairs for a bin
 #' @param exclude Chromosomes to exclude
+#' @export
 
 makeWindows <- function(genome, blacklist, windowSize, exclude = NULL){
   genome <- getFromNamespace(genome, ns=genome)

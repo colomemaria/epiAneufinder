@@ -107,8 +107,11 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   ncells <- length(grep("cell-", colnames(peaks)))
   # Exclude bins that have no signal in most cells
   peaks <- peaks[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
-
+  #Drop factor levels of empty chromosomes
+  peaks$seqnames<-droplevels(peaks$seqnames)
+  
   if(!file.exists(file.path(outdir,"results_gc_corrected.rds"))) {
+    
     clusters_ad <- peaks[, mclapply(.SD, function(x) {
       peaksperchrom <- split(x, peaks$seqnames)
       print("Calculating distance AD")

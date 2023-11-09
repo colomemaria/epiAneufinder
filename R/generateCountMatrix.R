@@ -1,7 +1,8 @@
-#' @export
+#' Generate count matrix
+#' 
 #' @param reads bamfile or fragments file of sequencing information
 #' @param windows Binned genome
-
+#' @export
 generateCountMatrix <- function(reads, windows, by=NULL, minFrags=NULL){
 
   #Keep only regions in filtered chromosomes
@@ -16,7 +17,8 @@ generateCountMatrix <- function(reads, windows, by=NULL, minFrags=NULL){
   windowSummary <- windows[keep,]
   countSummary <- counts[keep,]
 
-  se <- SummarizedExperiment(assays = list(counts = as.matrix(countSummary)), rowRanges = windowSummary)
+  se <- SummarizedExperiment(assays = list(counts = as.matrix(countSummary)),
+                             rowRanges = windowSummary)
   colnames(se) <- colnames(counts)
 
   return(se)

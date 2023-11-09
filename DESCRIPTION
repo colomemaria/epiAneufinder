@@ -1,36 +1,22 @@
 Package: epiAneufinder
 Type: Package
 Title: Calling copy numbers from scATAC-seq data
-Version: 0.1.0
-Author: Akshaya Ramakrishnan
-Maintainer: The package maintainer <akshaya4r@gmail.com>
+Version: 1.0.2
+Authors@R: c(person('Akshaya', 'Ramakrishnan', NULL, 'akshaya4r@gmail.com', c('cre', 'aut')),
+             person('Aikaterini', 'Symeonidi', NULL, 'aikaterini.symeonidi@helmholtz-muenchen.de', 'aut'),
+             person('Patrick', 'Hanel', NULL, 'patrick.hanel@helmholtz-muenchen.de', 'aut'),
+             person('Katharina', 'Schmid', NULL, 'katharina.schmid@bmc.med.lmu.de', 'aut'),
+             person('Maria', 'Richter', NULL, 'maria.richter@bmc.med.lmu.de', 'aut'),
+             person('Michael', 'Schubert', NULL, NULL, 'aut'),
+             person('Maria', 'Colomé-Tatché', NULL, 'maria.colome@helmholtz-muenchen.de', 'aut'))
 Description: Package to detect breakpoints and assign somies to scATAC-seq data.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.2
-Suggests: 
-    testthat
 Depends:
-    R (>= 3.5),
-    GenomicAlignments,
-    Matrix,
-    SummarizedExperiment,
-    data.table,
-    plyranges,
-    Rsamtools,
-    GenomeInfoDb,
-    BSgenome.Hsapiens.UCSC.hg38,
-    GenomicRanges,
-    stats,
-    Biostrings,
-    magrittr,
-    BiocGenerics,
-    S4Vectors,
-    ggplot2,
-    ggdendro,
-    cowplot,
-    parallel
+    R (>= 3.5)
+biocViews:
 Imports: 
     GenomicAlignments,
     Matrix,
@@ -51,3 +37,6 @@ Imports:
     parallel,
     ggdendro,
     R.utils
+Suggests: 
+    testthat,
+    fpc

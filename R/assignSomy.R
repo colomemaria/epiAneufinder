@@ -1,6 +1,8 @@
-#' @export
+#' Prunes breakpoints
+#' 
 #' @param results result.dt A data table combining the breakpoints and distances
-#' @return A data table afer pruning the noisy breakpoints
+#' @return A data table after pruning the noisy breakpoints
+#' @export
 threshold_dist_values <- function(result.dt) {
   result.dt$zscores <- scale(result.dt$per_chr_dist, center = TRUE, scale = TRUE)
   result.dt <- result.dt[zscores>0,]
@@ -8,12 +10,14 @@ threshold_dist_values <- function(result.dt) {
   return(result.dt)
 }
 
-#' @export
+#' Assign CNV state
+#' 
 #' @param seq_data Sequential data - Counts per bin
 #' @param cluster Vector showing segment identity
 #' @param uq Upper quantile to trim to calculate the cluster means
 #' @param lq Lower quantile to trim to calculate the cluster means
 #' @return Copy number states for the different segments
+#' @export
 assign_gainloss <- function(seq_data, cluster, uq=0.9, lq=0.1) {
   counts.normal <- seq_data / mean(seq_data)
   counts.normal[counts.normal< 0] <- 0

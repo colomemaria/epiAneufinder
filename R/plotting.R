@@ -1,9 +1,12 @@
-#' @export
-#' @export
+#' Plot karyogram
+#' 
 #' @param somies_ad A list containing the somy per bin of each cell
 #' @param outdir Directory where the output karyogram is to be saved
 #' @param peaks Dataframe containing bin information
-
+#' @param uq Upper quantile. Default: 0.1
+#' @param lq Lower quantile. Default: 0.9
+#' @param title_karyo String. Title of the output karyogram
+#' @export
 plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, title_karyo=NULL){
   # qc_dt <- data.table()
   # qc_dt$spikiness <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], qc.spikiness)

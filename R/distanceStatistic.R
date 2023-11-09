@@ -1,6 +1,8 @@
+#' Function to calculate the AD statistic between two distributions
+#' @param x Vector with reads counts left of the breakpoint
+#' @param y Vector with reads counts right of the breakpoint
+#' @param test Test statistics (either AD, KS or Bhattacharya)
 #' @export
-
-# Function to calculate the AD statistic between two distributions
 dist_ad <- function(x, y, test='AD'){
   if(test=='AD'){
     x <- as.numeric(x); y <- as.numeric(y)
@@ -40,7 +42,12 @@ dist_ad <- function(x, y, test='AD'){
   }
 }
 
-# Function to calculate the breakpoints with AD stat given a series of datapoints
+#' Function to calculate the breakpoints with AD stat given a series of data points
+#' 
+#' @param seq_data Normalized read counts per window
+#' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
+#' @param test Test statistics (either AD, KS or Bhattacharya)
+#' @export
 seq_dist_ad <- function(seq_data, minsize=3, test='AD') {
   bp1 <- seq(from = 1, to = length(seq_data), by = minsize)
   distlist <- vector()

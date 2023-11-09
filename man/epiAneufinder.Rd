@@ -20,7 +20,8 @@ epiAneufinder(
   threshold_blacklist_bins = 0.85,
   ncores = 4,
   minsize = 1,
-  k = 3
+  k = 3,
+  minsizeCNV = 5
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ epiAneufinder(
 \item{minsize}{Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution}
 
 \item{k}{Integer. Find 2^k segments per chromosome}
+
+\item{minsizeCNV}{Integer. Number of consecutive bins to constitute a possible CNV}
 }
 \value{
 \code{NULL}
