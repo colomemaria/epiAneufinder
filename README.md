@@ -60,7 +60,7 @@ epiAneufinder(input="sample.tsv", #Enter path to your fragments.tsv file or the 
               title_karyo="Karyogram of sample data", 
               ncores=4,
               minFrags=20000,
-              plotKaryo=FALSE)
+              plotKaryo=TRUE)
 ```
 
 We also provide a wrapper script to be used (epiAneufinder_wrapper.R). 
