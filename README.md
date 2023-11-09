@@ -50,7 +50,7 @@ The software has been tested for Linux and MacOS.
 library(epiAneufinder)
 epiAneufinder(input="sample.tsv", #Enter path to your fragments.tsv file or the folder containing bam files
               outdir="epiAneufinder_results", #Path to the directory where results should be written 
-              blacklist="blacklist.bed", #Path to bed file that contains the blacklisted regions of your genome
+              blacklist="hg38-blacklist.v2.bed", #Path to bed file that contains the blacklisted regions of your genome
               windowSize=1e5, 
               genome="BSgenome.Hsapiens.UCSC.hg38", #Substitute with relevant BSgenome
               exclude=c('chrX','chrY','chrM'), 
