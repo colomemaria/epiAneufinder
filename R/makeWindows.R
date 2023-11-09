@@ -25,8 +25,8 @@ makeWindows <- function(genome, blacklist, windowSize, exclude = NULL){
     chrSeq <- Biostrings::getSeq(genome,names(windowSplit)[x])
     grx <- windowSplit[[x]]
     aFreq <- Biostrings::alphabetFrequency(Biostrings::Views(chrSeq, ranges(grx)))
-    mcols(grx)$GC <- rowSums(aFreq[, c("G","C")]) / rowSums(aFreq)
-    mcols(grx)$AT <- rowSums(aFreq[, c("A","T")]) / rowSums(aFreq)
+    mcols(grx)$GC <- rowSums(aFreq[, c("G","C"),drop=FALSE]) / rowSums(aFreq)
+    mcols(grx)$AT <- rowSums(aFreq[, c("A","T"),drop=FALSE]) / rowSums(aFreq)
     return(grx)
   }) %>% GRangesList %>% unlist %>% sortSeqlevels %>% sort
   windowNuc$N <- 1 - (windowNuc$GC + windowNuc$AT)
