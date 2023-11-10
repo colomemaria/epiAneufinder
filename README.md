@@ -59,7 +59,8 @@ epiAneufinder(input="sample.tsv", #Enter path to your fragments.tsv file or the 
               reuse.existing=TRUE,
               title_karyo="Karyogram of sample data", 
               ncores=4,
-              minFrags=20000)
+              minFrags=20000,
+              plotKaryo=TRUE)
 ```
 
 We also provide a wrapper script to be used (epiAneufinder_wrapper.R). 
@@ -96,8 +97,15 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 ### Version History
 
+* 1.0.2
+    * Update function documentations
+    * Included a better explaining error message for mismatching chromosome versions
+    * Corrected minor bug if one chromosome fits in one window
+    * Made karyogram plotting optional (argument plotKaryo)
+
 * 0.1
     * Initial Release
+
 
 ### License
 
