@@ -81,6 +81,12 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       }
       counts <- generateCountMatrix(fragments, windows, by="barcode", minFrags = minFrags)
     }
+    
+    #Check that the count matrix really has entries
+    if(ncol(counts)==0){
+      stop("The created count matrix is empty. Please check input files and filtering options.")
+    }
+    
     print("Count matrix has been generated and will be saved as count_summary.rds")
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
   }
