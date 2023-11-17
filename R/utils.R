@@ -1,6 +1,31 @@
 #' @export
 splitAt <- function(x, pos) unname(split(x, cumsum(seq_along(x) %in% pos)))
 
+#' Read directly a count matrix saved in mtx format
+#' 
+#' @param dirpath Directory path that needs to contains three files in that directory:
+#'                matrix.mtx, barcodes.tsv and peaks.bed
+#' @import Matrix
+#' @export
+readCountMatrix<-function(dir_path){
+
+  counts<-readMM(file.path(dir_path,"matrix.mtx"))
+  
+  #Add cell barcodes
+  barcodes<-fread(file.path(dir_path,"barcodes.tsv"),header=FALSE)
+  colnames(counts)<-barcodes$V1
+  
+  #Add region information
+  regions<-fread(file.path(dir_path,"peaks.bed"),header=FALSE)
+  rownames(counts)<-paste(regions$V1,regions$V2,regions$V3,sep="-")
+  
+  #Convert into a dgCmatrix
+  counts<-as(counts,"dgCMatrix")
+  
+  return(counts)
+}
+
+
 # "%ni%" <- function(){ Negate("%in%") }
 
 #' @export
