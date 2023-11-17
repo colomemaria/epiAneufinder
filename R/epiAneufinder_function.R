@@ -1,6 +1,7 @@
 #' Wrapper function for the \code{\link{epiAneufinder}} package
 #'
-#' @param input Folder with bam files or a fragments.tsv file
+#' @param input Folder with bam files, a fragments.tsv/bed file or a folder with
+#'              a count matrix (required files: matrix.mtx, barcodes.tsv and peaks.bed)
 #' @param outdir Path to output directory
 #' @param blacklist Bed file with blacklisted regions
 #' @param windowSize Size of the window (Reccomended for sparse data - 1e6)
@@ -12,6 +13,7 @@
 #' @param lq Lower quantile. Default: 0.9
 #' @param title_karyo String. Title of the output karyogram
 #' @param minFrags Integer. Minimum number of reads for a cell to pass. Only required for fragments.tsv file. Default: 20000
+#' @param mapqFilter Filter bam files after a certain mapq value
 #' @param threshold_blacklist_bins Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85
 #' @param ncores Number of cores for parallelization. Default: 4
 #' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
@@ -42,7 +44,7 @@
 
 epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL,
-                    uq=0.9, lq=0.1, title_karyo=NULL, minFrags = 20000,
+                    uq=0.9, lq=0.1, title_karyo=NULL, minFrags = 20000, mapqFilter=10,
                     threshold_blacklist_bins=0.85, ncores=4, minsize=1, k=3, 
                     minsizeCNV=5,plotKaryo=TRUE){
 
@@ -59,10 +61,17 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
 
     if(file_test("-d", input)){
-      print("Obtaining bam file list")
-      bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
-      # print(bamfiles)
-      counts <- generateCountMatrix(bamfiles, windows)
+      if(file.exists(file.path(input,"matrix.mtx"))){
+        print("Obtaining count matrix and reformting it to specified windows")
+        peak_matrix<-readCountMatrix(input)
+        
+        counts <- generateCountMatrix(peak_matrix, windows)
+      } else {
+        print("Obtaining bam file list")
+        bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
+        # print(bamfiles)
+        counts <- generateCountMatrix(bamfiles, windows,mapqFilter=mapqFilter)
+      }
     }
     else if(file_test("-f", input)){
       if(grepl("\\.tsv$|\\.tsv.gz$", input)){
@@ -87,7 +96,8 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       stop("The created count matrix is empty. Please check input files and filtering options.")
     }
     
-    print("Count matrix has been generated and will be saved as count_summary.rds")
+    print(paste("Count matrix with",ncol(counts),"cells and",nrow(counts),"windows",
+                "has been generated and will be saved as count_summary.rds"))
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
   }
 
@@ -117,6 +127,8 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   peaks <- peaks[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
   #Drop factor levels of empty chromosomes
   peaks$seqnames<-droplevels(peaks$seqnames)
+  
+  print(paste("Filtering empty windows,",length(peaks),"windows remain."))
   
   if(!file.exists(file.path(outdir,"results_gc_corrected.rds"))) {
     

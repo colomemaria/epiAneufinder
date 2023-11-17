@@ -4,12 +4,25 @@
 \alias{generateCountMatrix}
 \title{Generate count matrix}
 \usage{
-generateCountMatrix(reads, windows, by = NULL, minFrags = NULL)
+generateCountMatrix(
+  reads,
+  windows,
+  by = NULL,
+  minFrags = NULL,
+  mapqFilter = NULL
+)
 }
 \arguments{
-\item{reads}{bamfile or fragments file of sequencing information}
+\item{reads}{BamFileList, Grange object or dgCMatrix object dependent 
+on the original input file type (see main wrapper function)}
 
 \item{windows}{Binned genome}
+
+\item{by}{barcode information}
+
+\item{minFrags}{Minimum number of fragments a barcode must contain to be counted as a cell}
+
+\item{mapqFilter}{Filter bam files after a certain mapq value}
 }
 \description{
 Generate count matrix

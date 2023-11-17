@@ -17,6 +17,7 @@ epiAneufinder(
   lq = 0.1,
   title_karyo = NULL,
   minFrags = 20000,
+  mapqFilter = 10,
   threshold_blacklist_bins = 0.85,
   ncores = 4,
   minsize = 1,
@@ -26,7 +27,8 @@ epiAneufinder(
 )
 }
 \arguments{
-\item{input}{Folder with bam files or a fragments.tsv file}
+\item{input}{Folder with bam files, a fragments.tsv/bed file or a folder with
+a count matrix (required files: matrix.mtx, barcodes.tsv and peaks.bed)}
 
 \item{outdir}{Path to output directory}
 
@@ -49,6 +51,8 @@ epiAneufinder(
 \item{title_karyo}{String. Title of the output karyogram}
 
 \item{minFrags}{Integer. Minimum number of reads for a cell to pass. Only required for fragments.tsv file. Default: 20000}
+
+\item{mapqFilter}{Filter bam files after a certain mapq value}
 
 \item{threshold_blacklist_bins}{Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85}
 
