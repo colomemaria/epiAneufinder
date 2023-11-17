@@ -1,7 +1,7 @@
 #' Wrapper function for the \code{\link{epiAneufinder}} package
 #'
 #' @param input Folder with bam files, a fragments.tsv/bed file or a folder with
-#'              a count matrix (required files: matrix.mtx, barcodes.tsv and peaks.bed)
+#'              a count matrix (required files: matrix.mtx(.gz), barcodes.tsv(.gz) and peaks.bed(.gz))
 #' @param outdir Path to output directory
 #' @param blacklist Bed file with blacklisted regions
 #' @param windowSize Size of the window (Reccomended for sparse data - 1e6)
@@ -61,7 +61,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
 
     if(file_test("-d", input)){
-      if(file.exists(file.path(input,"matrix.mtx"))){
+      if(any(file.exists(file.path(input,c("matrix.mtx","matrix.mtx.gz"))))){
         print("Obtaining count matrix and reformting it to specified windows")
         peak_matrix<-readCountMatrix(input)
         

@@ -4,19 +4,43 @@ splitAt <- function(x, pos) unname(split(x, cumsum(seq_along(x) %in% pos)))
 #' Read directly a count matrix saved in mtx format
 #' 
 #' @param dirpath Directory path that needs to contains three files in that directory:
-#'                matrix.mtx, barcodes.tsv and peaks.bed
+#'                matrix.mtx(.gz), barcodes.tsv(.gz) and peaks.bed(.gz)
 #' @import Matrix
 #' @export
 readCountMatrix<-function(dir_path){
 
-  counts<-readMM(file.path(dir_path,"matrix.mtx"))
+  #Read count matrix
+  if(file.exists(file.path(dir_path,"matrix.mtx"))){
+    counts<-readMM(file.path(dir_path,"matrix.mtx"))
+  } else if (file.exists(file.path(dir_path,"matrix.mtx.gz"))){
+    counts<-readMM(file.path(dir_path,"matrix.mtx.gz"))
+  } else {
+    stop(paste("Count matrix not found, needs to be named",
+               "count.mtx(.gz)!"))
+  }
   
   #Add cell barcodes
-  barcodes<-fread(file.path(dir_path,"barcodes.tsv"),header=FALSE)
+  if(file.exists(file.path(dir_path,"barcodes.tsv"))){
+    barcodes<-fread(file.path(dir_path,"barcodes.tsv"),header=FALSE)
+  } else if (file.exists(file.path(dir_path,"barcodes.tsv.gz"))){
+    barcodes<-fread(file.path(dir_path,"barcodes.tsv.gz"),header=FALSE)
+  } else {
+    stop(paste("Barcode file for the count matrix not found, needs to be named",
+               "barcodes.tsv(.gz)!"))
+  }
+  
   colnames(counts)<-barcodes$V1
   
   #Add region information
-  regions<-fread(file.path(dir_path,"peaks.bed"),header=FALSE)
+  if(file.exists(file.path(dir_path,"peaks.bed"))){
+    regions<-fread(file.path(dir_path,"peaks.bed"),header=FALSE)
+  } else if(file.exists(file.path(dir_path,"peaks.bed.gz"))){
+    regions<-fread(file.path(dir_path,"peaks.bed.gz"),header=FALSE)
+  } else {
+    stop(paste("Peak region file for the count matrix not found, needs to be named",
+               "peaks.bed(.gz)!"))    
+  }
+  
   rownames(counts)<-paste(regions$V1,regions$V2,regions$V3,sep="-")
   
   #Convert into a dgCmatrix

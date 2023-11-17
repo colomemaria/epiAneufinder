@@ -8,7 +8,7 @@ readCountMatrix(dir_path)
 }
 \arguments{
 \item{dirpath}{Directory path that needs to contains three files in that directory:
-matrix.mtx, barcodes.tsv and peaks.bed}
+matrix.mtx(.gz), barcodes.tsv(.gz) and peaks.bed(.gz)}
 }
 \description{
 Read directly a count matrix saved in mtx format

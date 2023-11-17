@@ -28,7 +28,7 @@ epiAneufinder(
 }
 \arguments{
 \item{input}{Folder with bam files, a fragments.tsv/bed file or a folder with
-a count matrix (required files: matrix.mtx, barcodes.tsv and peaks.bed)}
+a count matrix (required files: matrix.mtx(.gz), barcodes.tsv(.gz) and peaks.bed(.gz))}
 
 \item{outdir}{Path to output directory}
 
