@@ -128,7 +128,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   #Drop factor levels of empty chromosomes
   peaks$seqnames<-droplevels(peaks$seqnames)
   
-  print(paste("Filtering empty windows,",length(peaks),"windows remain."))
+  print(paste("Filtering empty windows,",nrow(peaks),"windows remain."))
   
   if(!file.exists(file.path(outdir,"results_gc_corrected.rds"))) {
     
