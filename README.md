@@ -48,6 +48,8 @@ The software has been tested for Linux and MacOS.
 
 ### Executing program
 
+This is a short introduction in the epiAneufinder functionality, more information can be found in the vignette [introduction-epiAneufinder](vignettes/introduction-epiAneufinder.html).
+
 ```
 library(epiAneufinder)
 epiAneufinder(input="sample.tsv", #Enter path to your fragments.tsv file or the folder containing bam files
@@ -97,8 +99,16 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 ### Version History
 
+* 1.0.3
+    * Added the option to start the algorithm directly from a count matrix (Warning: performance might drop compared to bam/fragment files, see vignette)
+    * Extended the text output to show a few more infos, e.g. number cells and windows
+    * Added the parameter mapqFilter for a flexible filter of the bam files
+    * Added a function to split cells into sublcones
+    * Added to additional plotting functions, to plot the read distribution of an individual cell and to plot additional annotations in a side bar next to the karyogram
+    * Added a vignette to improve the documentation
+
 * 1.0.2
-    * Update function documentations
+    * Updated function documentations
     * Included a better explaining error message for mismatching chromosome versions
     * Corrected minor bug if one chromosome fits in one window
     * Made karyogram plotting optional (argument plotKaryo)

@@ -11,6 +11,7 @@ Authors@R: c(person('Akshaya', 'Ramakrishnan', NULL, 'akshaya4r@gmail.com', c('c
              person('Maria', 'Colomé-Tatché', NULL, 'maria.colome@helmholtz-muenchen.de', 'aut'))
 Description: Package to detect breakpoints and assign somies to scATAC-seq data.
 License: GPL-3
+VignetteBuilder: knitr, rmarkdown
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.1
@@ -34,9 +35,12 @@ Imports:
     S4Vectors,
     ggplot2,
     cowplot,
+    gridExtra,
     parallel,
     ggdendro,
     R.utils
 Suggests: 
     testthat,
-    fpc
+    fpc,
+    knitr,
+    rmarkdown
