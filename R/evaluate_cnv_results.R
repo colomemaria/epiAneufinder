@@ -63,7 +63,7 @@ split_subclones<-function(res_table,tree_depth,plot_tree=TRUE,
 #' @import cowplot
 #' @export
 plot_karyo_annotated<-function(res_table, plot_path, annot_dt=NULL, 
-                               title_karyo=NULL){
+                               title_karyo=""){
 
   #Reformat somy dataframe
   res_table<-as.data.table(res_table)
@@ -71,6 +71,9 @@ plot_karyo_annotated<-function(res_table, plot_path, annot_dt=NULL,
   somies.dt$rn <- 1:nrow(somies.dt)
   somies_melted <- melt(somies.dt, id.vars=c('rn','seq'))
   somies_melted$value <- as.factor(paste0(somies_melted$value,'-somy'))
+  
+  #Sort the karyogram chromosomes correctly (assuming that the order in res_table is correct)
+  somies_melted$seq<-factor(somies_melted$seq,levels=unique(res_table$seq))
   
   #Create a hierarchical clustering and plot clustering
   counts_t <- t(somies.dt[ ,.SD, .SDcols=patterns('cell-')])
@@ -135,7 +138,7 @@ plot_karyo_annotated<-function(res_table, plot_path, annot_dt=NULL,
         scale_fill_discrete("Annotation")+
         coord_flip()+
         facet_grid(~type, scales = 'free', space = 'free') +
-        ggtitle("")+
+        labs(title = "")+
         theme(legend.title=element_text(size=16),
               legend.text=element_text(size=16),
               plot.title = element_text(size=18))+
@@ -151,12 +154,12 @@ plot_karyo_annotated<-function(res_table, plot_path, annot_dt=NULL,
               legend.position="none")
       
       combiplot <- cowplot::plot_grid(ggdndr, ggsomy, ggannot, ncol = 3, 
-                                      rel_widths = c(0.1,1,0.05), 
+                                      rel_widths = c(0.1,1,0.03), 
                                       axis='b', align = 'hw')
       combiplot <- cowplot::plot_grid(combiplot,gglegend,ncol=1,
                                       rel_heights=c(1,0.05))
       
-      ggsave(plot_path, combiplot, width = 36, height=20, units = "in")
+      ggsave(plot_path, combiplot, width = 38, height=20, units = "in")
     }
     
   } else {
