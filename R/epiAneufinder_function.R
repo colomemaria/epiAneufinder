@@ -45,8 +45,8 @@
 epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL,
                     uq=0.9, lq=0.1, title_karyo=NULL, minFrags = 20000, mapqFilter=10,
-                    threshold_blacklist_bins=0.85, ncores=4, minsize=1, k=3, 
-                    minsizeCNV=5,plotKaryo=TRUE){
+                    threshold_blacklist_bins=0.85, ncores=4, minsize=1, k=4, 
+                    minsizeCNV=0,plotKaryo=TRUE){
 
   outdir <- file.path(outdir, "epiAneufinder_results")
   dir.create(outdir,recursive=TRUE)
