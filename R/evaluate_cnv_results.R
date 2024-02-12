@@ -135,10 +135,9 @@ plot_karyo_annotated<-function(res_table, plot_path, annot_dt=NULL,
       annot_dt$type<-"Annotation"
       ggannot<-ggplot(annot_dt,aes(x=cell,y=1,fill=annot))+
         geom_tile()+
-        scale_fill_discrete("Annotation")+
         coord_flip()+
         facet_grid(~type, scales = 'free', space = 'free') +
-        labs(title = "")+
+        labs(title = "",fill="Annotation")+
         theme(legend.title=element_text(size=16),
               legend.text=element_text(size=16),
               plot.title = element_text(size=18))+
