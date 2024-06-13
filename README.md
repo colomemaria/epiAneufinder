@@ -87,7 +87,7 @@ Contributors names and contact info
 
 Akshaya Ramakrishnan (akshaya4r@gmail.com)
 
-Aikaterini Symeonidi (aikaterini.symeonidi@helmholtz-muenchen.de) 
+Aikaterini Symeonidi (asymeonidi@bmc.me.lmu.de and ksymeonidh@gmail.com) 
 
 Patrick Hanel (patrick.hanel@helmholtz-muenchen.de) 
 
