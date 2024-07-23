@@ -101,6 +101,9 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 ### Version History
 
+* 1.0.4
+    * Adding the parameter gc_correction to allow multiple options there.
+
 * 1.0.3
     * Added the option to start the algorithm directly from a count matrix (Warning: performance might drop compared to bam/fragment files, see vignette)
     * Extended the text output to show a few more infos, e.g. number cells and windows

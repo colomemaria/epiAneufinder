@@ -14,6 +14,7 @@
 #' @param title_karyo String. Title of the output karyogram
 #' @param minFrags Integer. Minimum number of reads for a cell to pass. Only required for fragments.tsv file. Default: 20000
 #' @param mapqFilter Filter bam files after a certain mapq value
+#' @param gc_correction Type of GC correction, currently implemented options are "loess" and "none".
 #' @param threshold_blacklist_bins Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85
 #' @param ncores Number of cores for parallelization. Default: 4
 #' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
@@ -45,7 +46,8 @@
 epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL,
                     uq=0.9, lq=0.1, title_karyo=NULL, minFrags = 20000, mapqFilter=10,
-                    threshold_blacklist_bins=0.85, ncores=4, minsize=1, k=4, 
+                    gc_correction="loess",threshold_blacklist_bins=0.85,
+                    ncores=4, minsize=1, k=4, 
                     minsizeCNV=0,plotKaryo=TRUE){
 
   outdir <- file.path(outdir, "epiAneufinder_results")
@@ -106,20 +108,35 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   colnames(peaks) <- paste0('cell-', colnames(peaks))
   rowinfo <- as.data.table(rowRanges(counts))
   peaks <- cbind(rowinfo, peaks)
+  
+  #Test which option for GC correction is chosen
+  if(gc_correction == "none"){
+    
+    message("Skipping GC correction, continuing with raw counts ...")
+    
+  } else if (gc_correction == "loess") {
+    
+    if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
+      
+      message("Correcting for GC bias using a LOESS fit ...")
+      
+      corrected_counts <- peaks[, mclapply(.SD, function(x) {
+        # LOESS correction for GC
+        fit <- stats::loess(x ~ peaks$GC)
+        correction <- mean(x) / fit$fitted
+        as.integer(round(x * correction))
+      }, mc.cores = ncores), .SDcols = patterns("cell-")]
+      saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
+    
+    } 
+    
+    corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
+    peaks <- cbind(rowinfo, corrected_counts)
 
-  if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
-    message("Correcting for GC bias...")
-    corrected_counts <- peaks[, mclapply(.SD, function(x) {
-      # LOESS correction for GC
-      fit <- stats::loess(x ~ peaks$GC)
-      correction <- mean(x) / fit$fitted
-      as.integer(round(x * correction))
-    }, mc.cores = ncores), .SDcols = patterns("cell-")]
-    saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
+  } else {
+    stop (paste0("Type of GC correction not known! Only implemented options ",
+                 "are \"loess\" and \"none\"."))
   }
-
-  corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
-  peaks <- cbind(rowinfo, corrected_counts)
 
   zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
   ncells <- length(grep("cell-", colnames(peaks)))

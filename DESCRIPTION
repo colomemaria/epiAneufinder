@@ -1,7 +1,7 @@
 Package: epiAneufinder
 Type: Package
 Title: Calling copy numbers from scATAC-seq data
-Version: 1.0.3
+Version: 1.0.4
 Authors@R: c(person('Akshaya', 'Ramakrishnan', NULL, 'akshaya4r@gmail.com', c('cre', 'aut')),
              person('Aikaterini', 'Symeonidi', NULL, 'aikaterini.symeonidi@helmholtz-muenchen.de', 'aut'),
              person('Patrick', 'Hanel', NULL, 'patrick.hanel@helmholtz-muenchen.de', 'aut'),
