@@ -140,6 +140,12 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
 
   zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
   ncells <- length(grep("cell-", colnames(peaks)))
+  
+  # Save which bins will be removed in the next step as a separate file
+  write.table(file=file.path(outdir,"removed_regions.tsv"),
+              peaks[zeroes_per_bin>=(threshold_blacklist_bins*ncells),c("seqnames","start","end")],
+              sep="\t",quote=FALSE,row.names=FALSE)
+  
   # Exclude bins that have no signal in most cells
   peaks <- peaks[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
   #Drop factor levels of empty chromosomes
