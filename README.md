@@ -103,6 +103,7 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 * 1.0.4
     * Adding the parameter gc_correction to allow multiple options there.
+    * Adding a file removed_regions.tsv to document which regions were filtered out.
 
 * 1.0.3
     * Added the option to start the algorithm directly from a count matrix (Warning: performance might drop compared to bam/fragment files, see vignette)
