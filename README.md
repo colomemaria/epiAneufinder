@@ -14,6 +14,8 @@ The algorithm works in three steps:
 2. Genome segmentation based on maximum Anderson-Darling distance
 3. Gain/loss assignments
 
+**Remark:** The GC correction step has currently performance issues on large datasets. We are working on a more efficient solution here and keep you updated!
+
 ### Getting Started
 
 epiAneufinder is an R package
