@@ -133,6 +133,28 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
     peaks <- cbind(rowinfo, corrected_counts)
 
+  } else if (gc_correction == "bulk_loess") {
+    
+    if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
+      
+      message("Correcting for GC bias using a LOESS fit based on pseudobulk aggergate ...")
+      
+      #create pseudobulk aggregate and get loess fit for that
+      summarizedCounts <- matrixStats::rowMedians(as.matrix(peaks[, grepl("cell-", colnames(peaks)), with = FALSE]))
+      fit <- stats::loess(summarizedCounts ~ peaks$GC)
+      
+      #Correct each cell with the LOESS factor
+      corrected_counts <- peaks[, mclapply(.SD, function(x) {
+        correction <- mean(x) / fit$fitted
+        as.integer(round(x * correction))
+      }, mc.cores = ncores), .SDcols = patterns("cell-")]
+      saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
+    } 
+    
+    corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
+    peaks <- cbind(rowinfo, corrected_counts)
+    
+    
   } else {
     stop (paste0("Type of GC correction not known! Only implemented options ",
                  "are \"loess\" and \"none\"."))
