@@ -140,14 +140,13 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       message("Correcting for GC bias using a LOESS fit based on pseudobulk aggergate ...")
       
       #create pseudobulk aggregate and get loess fit for that
-      summarizedCounts <- matrixStats::rowMedians(as.matrix(peaks[, grepl("cell-", colnames(peaks)), with = FALSE]))
+      count_matrix<-as.matrix(peaks[, grepl("cell-", colnames(peaks)), with = FALSE])
+      summarizedCounts <- matrixStats::rowMedians(count_matrix)
       fit <- stats::loess(summarizedCounts ~ peaks$GC)
       
       #Correct each cell with the LOESS factor
-      corrected_counts <- peaks[, mclapply(.SD, function(x) {
-        correction <- mean(x) / fit$fitted
-        as.integer(round(x * correction))
-      }, mc.cores = ncores), .SDcols = patterns("cell-")]
+      corrected_counts <- round(t(t(count_matrix) * colMeans(count_matrix)) / fit$fitted)
+      
       saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
     } 
     
@@ -155,7 +154,46 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     peaks <- cbind(rowinfo, corrected_counts)
     
     
-  } else {
+  } else if (gc_correction == "simple") {
+    
+    if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
+      
+      message("Correcting for GC bias with a simple approach (dividing by GC content) ...")
+      
+      #Count matrix
+      count_matrix<-as.matrix(peaks[, grepl("cell-", colnames(peaks)), with = FALSE])
+      corrected_counts <- round(count_matrix / peaks$GC)
+      
+      saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
+    } 
+    
+    corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
+    peaks <- cbind(rowinfo, corrected_counts)
+    
+  } else if (gc_correction == "simple_smoothed") {
+    
+    if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
+      
+      #TODO: if we want to keep them, need to incorporate them better
+      library(future.apply)
+      library(smoother)
+      
+      message("Correcting for GC bias with a simple approach plus gaussian smoothing...")
+      
+      #Count matrix
+      count_matrix<-as.matrix(peaks[, grepl("cell-", colnames(peaks)), with = FALSE])
+      norm_counts <- count_matrix / peaks$GC
+      corrected_counts<-round(future_apply(norm_counts,2,smth.gaussian,window=3,tails=TRUE,mc.cores=ncores))
+      
+      saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
+    } 
+    
+    corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
+    peaks <- cbind(rowinfo, corrected_counts)
+    
+  }
+    
+    else {
     stop (paste0("Type of GC correction not known! Only implemented options ",
                  "are \"loess\" and \"none\"."))
   }
