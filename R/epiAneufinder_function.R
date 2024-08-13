@@ -145,7 +145,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       fit <- stats::loess(summarizedCounts ~ peaks$GC)
       
       #Correct each cell with the LOESS factor
-      corrected_counts <- round(t(t(count_matrix) * colMeans(count_matrix)) / fit$fitted)
+      corrected_counts <- as.integer(round(t(t(count_matrix) * colMeans(count_matrix)) / fit$fitted))
       
       saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
     } 
@@ -170,20 +170,21 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
     peaks <- cbind(rowinfo, corrected_counts)
     
-  } else if (gc_correction == "simple_smoothed") {
+  } else if (gc_correction == "quadratic") {
     
     if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
       
-      #TODO: if we want to keep them, need to incorporate them better
-      library(future.apply)
-      library(smoother)
+      message("Correcting for GC bias with binned quadratic polynomial ...")
       
-      message("Correcting for GC bias with a simple approach plus gaussian smoothing...")
+      #Create a standard assignment of bins to GC interval
+      gc.categories <- seq(from=0, to=1, length=21)
+      mean.gc.interval<-(gc.categories[-length(gc.categories)]+gc.categories[-1])/2
+      intervals.per.bin <- findInterval(peaks$GC, gc.categories)
       
-      #Count matrix
-      count_matrix<-as.matrix(peaks[, grepl("cell-", colnames(peaks)), with = FALSE])
-      norm_counts <- count_matrix / peaks$GC
-      corrected_counts<-round(future_apply(norm_counts,2,smth.gaussian,window=3,tails=TRUE,mc.cores=ncores))
+      corrected_counts <- peaks[, mclapply(.SD, function(x){
+        quadratic_gc_correction(x,peaks$GC,intervals.per.bin,mean.gc.interval)}, 
+        mc.cores = ncores), 
+        .SDcols = patterns("cell-")]
       
       saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
     } 
@@ -215,9 +216,10 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   
   if(!file.exists(file.path(outdir,"results_gc_corrected.rds"))) {
     
+    print("Calculating distance AD")
+    
     clusters_ad <- peaks[, mclapply(.SD, function(x) {
       peaksperchrom <- split(x, peaks$seqnames)
-      print("Calculating distance AD")
       results <- lapply(peaksperchrom, function(x2) {
         getbp(x2, k = k, minsize = minsize, test=test,minsizeCNV=minsizeCNV)
       })
