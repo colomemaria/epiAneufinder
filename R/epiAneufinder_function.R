@@ -54,7 +54,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   dir.create(outdir,recursive=TRUE)
   
   if(reuse.existing==FALSE){
-    print("Removing old file from the output folder")
+    message("Removing old file from the output folder")
     file.remove(list.files(outdir, full.names=TRUE))
   }
 
@@ -64,12 +64,12 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
 
     if(file_test("-d", input)){
       if(any(file.exists(file.path(input,c("matrix.mtx","matrix.mtx.gz"))))){
-        print("Obtaining count matrix and reformting it to specified windows")
+        message("Obtaining count matrix and reformting it to specified windows")
         peak_matrix<-readCountMatrix(input)
         
         counts <- generateCountMatrix(peak_matrix, windows)
       } else {
-        print("Obtaining bam file list")
+        message("Obtaining bam file list")
         bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
         # print(bamfiles)
         counts <- generateCountMatrix(bamfiles, windows,mapqFilter=mapqFilter)
@@ -77,14 +77,13 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     }
     else if(file_test("-f", input)){
       if(grepl("\\.tsv$|\\.tsv.gz$", input)){
-        print("Obtaining the fragments tsv file")
+        message("Obtaining the fragments tsv file")
         file_fragments <- fread(input)
         colnames(file_fragments) <- c('seqnames','start','end','barcode','pcr')
         fragments <- as_granges(file_fragments)
-        print(head(fragments))
-        print(names(fragments))
+        #print(head(fragments))
       } else if(grepl("\\.bed$", input)){
-        print("Obtaining the fragments bed file")
+        message("Obtaining the fragments bed file")
         fragments <- read_bed(input)
         names(mcols(fragments)) <- 'barcode'
       } else{
@@ -98,7 +97,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       stop("The created count matrix is empty. Please check input files and filtering options.")
     }
     
-    print(paste("Count matrix with",ncol(counts),"cells and",nrow(counts),"windows",
+    message(paste("Count matrix with",ncol(counts),"cells and",nrow(counts),"windows",
                 "has been generated and will be saved as count_summary.rds"))
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
   }
@@ -137,7 +136,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     
     if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
       
-      message("Correcting for GC bias using a LOESS fit based on pseudobulk aggergate ...")
+      message("Correcting for GC bias using a LOESS fit based on pseudobulk aggregate ...")
       
       #create pseudobulk aggregate and get loess fit for that
       count_matrix<-as.matrix(peaks[, grepl("cell-", colnames(peaks)), with = FALSE])
@@ -145,7 +144,10 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       fit <- stats::loess(summarizedCounts ~ peaks$GC)
       
       #Correct each cell with the LOESS factor
-      corrected_counts <- as.integer(round(t(t(count_matrix) * colMeans(count_matrix)) / fit$fitted))
+      corrected_counts <- t(t(count_matrix) * colMeans(count_matrix)) / fit$fitted
+      
+      #Convert it to an integer matrix again
+      mode(corrected_counts)<-"integer"
       
       saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
     } 
@@ -212,11 +214,11 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   #Drop factor levels of empty chromosomes
   peaks$seqnames<-droplevels(peaks$seqnames)
   
-  print(paste("Filtering empty windows,",nrow(peaks),"windows remain."))
+  message(paste("Filtering empty windows,",nrow(peaks),"windows remain."))
   
   if(!file.exists(file.path(outdir,"results_gc_corrected.rds"))) {
     
-    print("Calculating distance AD")
+    message("Calculating distance AD")
     
     clusters_ad <- peaks[, mclapply(.SD, function(x) {
       peaksperchrom <- split(x, peaks$seqnames)
@@ -226,7 +228,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     }, mc.cores = ncores), .SDcols = patterns("cell-")]
     saveRDS(clusters_ad, file.path(outdir, "results_gc_corrected.rds"))
   }
-  print("Successfully identified breakpoints")
+  message("Successfully identified breakpoints")
 
   if(!file.exists(file.path(outdir,"cnv_calls.rds"))) {
     names_seq <- levels(peaks$seqnames)
@@ -249,7 +251,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     pruned_result.dt <- lapply(result.dt, function(x){
       threshold_dist_values(x)
     })
-    print("Successfully discarded irrelevant breakpoints")
+    message("Successfully discarded irrelevant breakpoints")
 
 
     clusters_pruned <- as.data.table(Map(function(seq_data, bp){
@@ -282,7 +284,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     somies_ad <- Map(function(seq_data,cluster) {
       assign_gainloss(seq_data, cluster, uq=uq, lq=lq)
     }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
-    print("Successfully assigned gain-loss")
+    message("Successfully assigned gain-loss")
     saveRDS(somies_ad, file.path(outdir, "cnv_calls.rds"))
   }
   
@@ -305,6 +307,6 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     }
     # Call plotting function to plot and save karyogram
     plot_karyo_gainloss(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, title_karyo)
-    print("Successfully plotted karyogram")
+    message("Successfully plotted karyogram")
   }
 }
