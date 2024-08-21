@@ -40,10 +40,11 @@ epiAneufinder(input="../sample_data/sample.tsv",
               windowSize=1e5, 
               genome="BSgenome.Hsapiens.UCSC.hg38", 
               exclude=c('chrX','chrY','chrM'), 
-              reuse.existing=TRUE,
+              reuse.existing=FALSE,
               title_karyo="Karyogram of sample data", 
               ncores=4,
               minFrags=20000,
+              gc_correction="quadratic",
               minsizeCNV=0,
               k=4,
               plotKaryo=TRUE)
@@ -56,6 +57,16 @@ In the example above, a fragment file is supplied, but different input formats a
 The filtering options are dependent on the input file type. In case, a fragment file is provided the parameter `minFrags` filters cells with too less fragments. In case, a directory with bam files is provided the parameter `mapqFilter` filters low quality reads. For the option to provide directly a count matrix, no filtering is currently implemented.
 
 **Note of caution** We compared the results of CNV calling with the peak matrix compared to fragment file as input. We used the SNU601 dataset as in the publication and compared with the scWGS dataset as groundtruth. The correlation between the CNVs is worse when using the matrix as input (0.74 from 0.85). We loose reads that are not in peak regions so overall we get less coverage over the genome. The result is that we can miss some gains and losses that would otherwise have been identified with the fragment input. So we would suggest a bit of caution in the interpretation of the results, but the comparison with the groundtruth the method still gives valid results.
+
+### GC correction
+
+The counts per windows are biased by the GC content of the associated genomic region, so that a GC correction step is essential. As this correction can be come time-intensive, we offer the user several options to balance runtime and accuracy in the parameter `gc_correction`. 
+
+The original method proposed in our publication, called `loess` is very accurate, but doesn't scale well with large datasets. A faster, however more approximate alternative is the method called `quadratic`. Briefly, both versions fit a correction factor to adjust for GC-dependent count deviations, but using two different models. The option `loess` applies a LOESS model, while `quadratic` bins the data based on the GC content and fits a bin-wise quadratic polynomial model. Both versions are applied separately on each cell. Detailed descriptions and formulas can be found for `loess` in the epiAneufinder publication (Ramakrishnan et al., NatComms 2023) and for `quadratic` in the aneuFinder publication (Bakker et al, Genome Biology 2016). 
+
+A third alternative is to apply the LOESS function not separately on each cell, but once fit a model on the pseudobulk aggregates across all cells (using the median counts) and use this as a general correction factor for each cell. This option is called `bulk_loess`.
+
+In evaluations on different datasets, we validated that the overall method performance differs only slightly depending on the chosen GC method. `loess` and `bulk_loess` were slightly more accurate overall. However, the option `quadratic` is the fastest, followed by `bulk_loess`. We would recommend for large datasets to apply `quadratic` (default option) or `bulk_loess` and for small datasets `loess`.
 
 ### Other parameters
 

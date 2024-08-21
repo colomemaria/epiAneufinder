@@ -18,7 +18,7 @@ epiAneufinder(
   title_karyo = NULL,
   minFrags = 20000,
   mapqFilter = 10,
-  gc_correction = "loess",
+  gc_correction = "quadratic",
   threshold_blacklist_bins = 0.85,
   ncores = 4,
   minsize = 1,
@@ -55,7 +55,7 @@ a count matrix (required files: matrix.mtx(.gz), barcodes.tsv(.gz) and peaks.bed
 
 \item{mapqFilter}{Filter bam files after a certain mapq value}
 
-\item{gc_correction}{Type of GC correction, currently implemented options are "loess" and "none".}
+\item{gc_correction}{Type of GC correction, currently implemented options are "loess", "bulk_loess" and "quadratic".}
 
 \item{threshold_blacklist_bins}{Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85}
 

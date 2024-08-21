@@ -191,14 +191,14 @@ plot_single_cell_profile<-function(outdir,threshold_blacklist_bins=0.85,
   rowinfo <- as.data.table(rowRanges(counts))
   peaks <- cbind(rowinfo, peaks)
   
+  #Repeat the filtering of empty windows
+  zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
+  ncells <- length(grep("cell-", colnames(peaks)))
+  rowinfo <- rowinfo[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
+  
   #Load the GC corrected counts
   corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
   peaks <- cbind(rowinfo, corrected_counts)
-  
-  #Repeat the filtering of 
-  zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
-  ncells <- length(grep("cell-", colnames(peaks)))
-  peaks <- peaks[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
   
   #Get the CNV predictions
   somies_ad <- readRDS(file.path(outdir,"cnv_calls.rds"))

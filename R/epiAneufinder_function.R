@@ -14,7 +14,7 @@
 #' @param title_karyo String. Title of the output karyogram
 #' @param minFrags Integer. Minimum number of reads for a cell to pass. Only required for fragments.tsv file. Default: 20000
 #' @param mapqFilter Filter bam files after a certain mapq value
-#' @param gc_correction Type of GC correction, currently implemented options are "loess" and "none".
+#' @param gc_correction Type of GC correction, currently implemented options are "loess", "bulk_loess" and "quadratic".
 #' @param threshold_blacklist_bins Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85
 #' @param ncores Number of cores for parallelization. Default: 4
 #' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
@@ -46,7 +46,7 @@
 epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL,
                     uq=0.9, lq=0.1, title_karyo=NULL, minFrags = 20000, mapqFilter=10,
-                    gc_correction="loess",threshold_blacklist_bins=0.85,
+                    gc_correction="quadratic",threshold_blacklist_bins=0.85,
                     ncores=4, minsize=1, k=4, 
                     minsizeCNV=0,plotKaryo=TRUE){
 
@@ -58,6 +58,10 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     file.remove(list.files(outdir, full.names=TRUE))
   }
 
+  # ----------------------------------------------------------------------------
+  # Creating the count matrix
+  # ----------------------------------------------------------------------------
+  
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
     windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
@@ -108,12 +112,33 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   rowinfo <- as.data.table(rowRanges(counts))
   peaks <- cbind(rowinfo, peaks)
   
-  #Test which option for GC correction is chosen
-  if(gc_correction == "none"){
-    
-    message("Skipping GC correction, continuing with raw counts ...")
-    
-  } else if (gc_correction == "loess") {
+  # ----------------------------------------------------------------------------
+  # Filtering windows without enough coverage
+  # ----------------------------------------------------------------------------
+  
+  zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
+  ncells <- length(grep("cell-", colnames(peaks)))
+  
+  # Save which bins will be removed in the next step as a separate file
+  write.table(file=file.path(outdir,"removed_regions.tsv"),
+              peaks[zeroes_per_bin>=(threshold_blacklist_bins*ncells),
+                    c("seqnames","start","end")],
+              sep="\t",quote=FALSE,row.names=FALSE)
+  
+  # Exclude bins that have no signal in most cells
+  peaks <- peaks[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
+  rowinfo<-rowinfo[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
+  
+  #Drop factor levels of empty chromosomes
+  peaks$seqnames<-droplevels(peaks$seqnames)
+  
+  message(paste("Filtering empty windows,",nrow(peaks),"windows remain."))
+  
+  # ----------------------------------------------------------------------------
+  # GC correction
+  # ----------------------------------------------------------------------------
+  
+  if (gc_correction == "loess") {
     
     if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
       
@@ -128,9 +153,6 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
     
     } 
-    
-    corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
-    peaks <- cbind(rowinfo, corrected_counts)
 
   } else if (gc_correction == "bulk_loess") {
     
@@ -152,31 +174,11 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
     } 
     
-    corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
-    peaks <- cbind(rowinfo, corrected_counts)
-    
-    
-  } else if (gc_correction == "simple") {
-    
-    if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
-      
-      message("Correcting for GC bias with a simple approach (dividing by GC content) ...")
-      
-      #Count matrix
-      count_matrix<-as.matrix(peaks[, grepl("cell-", colnames(peaks)), with = FALSE])
-      corrected_counts <- round(count_matrix / peaks$GC)
-      
-      saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
-    } 
-    
-    corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
-    peaks <- cbind(rowinfo, corrected_counts)
-    
   } else if (gc_correction == "quadratic") {
     
     if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
       
-      message("Correcting for GC bias with binned quadratic polynomial ...")
+      message("Correcting for GC bias with a binned quadratic polynomial ...")
       
       #Create a standard assignment of bins to GC interval
       gc.categories <- seq(from=0, to=1, length=21)
@@ -191,30 +193,17 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
     } 
     
-    corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
-    peaks <- cbind(rowinfo, corrected_counts)
-    
-  }
-    
-    else {
+  } else {
     stop (paste0("Type of GC correction not known! Only implemented options ",
-                 "are \"loess\" and \"none\"."))
+                 "are \"loess\", \"bulk_loss\" and \"quadratic\"."))
   }
 
-  zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
-  ncells <- length(grep("cell-", colnames(peaks)))
+  # ----------------------------------------------------------------------------
+  # Estimating breakpoints
+  # ----------------------------------------------------------------------------
   
-  # Save which bins will be removed in the next step as a separate file
-  write.table(file=file.path(outdir,"removed_regions.tsv"),
-              peaks[zeroes_per_bin>=(threshold_blacklist_bins*ncells),c("seqnames","start","end")],
-              sep="\t",quote=FALSE,row.names=FALSE)
-  
-  # Exclude bins that have no signal in most cells
-  peaks <- peaks[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
-  #Drop factor levels of empty chromosomes
-  peaks$seqnames<-droplevels(peaks$seqnames)
-  
-  message(paste("Filtering empty windows,",nrow(peaks),"windows remain."))
+  corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
+  peaks <- cbind(rowinfo, corrected_counts)
   
   if(!file.exists(file.path(outdir,"results_gc_corrected.rds"))) {
     
@@ -230,6 +219,10 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   }
   message("Successfully identified breakpoints")
 
+  # ----------------------------------------------------------------------------
+  # Pruning break points and annotating CNV status of each segment
+  # ----------------------------------------------------------------------------
+  
   if(!file.exists(file.path(outdir,"cnv_calls.rds"))) {
     names_seq <- levels(peaks$seqnames)
 
@@ -252,7 +245,6 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       threshold_dist_values(x)
     })
     message("Successfully discarded irrelevant breakpoints")
-
 
     clusters_pruned <- as.data.table(Map(function(seq_data, bp){
       # Split the readcounts into the different chr
@@ -296,10 +288,16 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     x <- factor(x, levels = c(0,1,2))
     return(x)
     }))
-  write_somies.dt <- as.data.table(cbind(seq=peaks$seqnames, start=peaks$start, end=peaks$end, write_somies.dt))
+  write_somies.dt <- as.data.table(cbind(seq=peaks$seqnames, start=peaks$start, 
+                                         end=peaks$end, write_somies.dt))
   write.table(write_somies.dt, file = file.path(outdir, "results_table.tsv"), quote = FALSE)
-  message("A .tsv file with the results has been written to disk. It contains the copy number states for each cell per bin.
+  message("A .tsv file with the results has been written to disk. 
+          It contains the copy number states for each cell per bin.
           0 denotes 'Loss', 1 denotes 'Normal', 2 denotes 'Gain'.")
+  
+  # ----------------------------------------------------------------------------
+  # Plotting the result karyogram
+  # ----------------------------------------------------------------------------
   
   if(plotKaryo){
     if(is.null(title_karyo)){

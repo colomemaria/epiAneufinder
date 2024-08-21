@@ -101,8 +101,9 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 ### Version History
 
-* 1.0.4
-    * Adding the parameter gc_correction to allow multiple options there.
+* 1.1.0
+    * Adding the parameter `gc_correction` and multiple versions of GC correction. Besides the old version `loess`, two faster alternatives are now available, `quadratic` and  `bulk_loess` (explanations in the vignette).
+    * Switching the order, first filtering lowly covered regions before applying the GC correction.
     * Adding a file removed_regions.tsv to document which regions were filtered out.
 
 * 1.0.3

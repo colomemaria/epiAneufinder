@@ -9,7 +9,7 @@ quadratic_gc_correction(
   counts,
   gc_content,
   intervals_per_bin,
-  mean.gc.interval
+  mean_gc_interval
 )
 }
 \arguments{
@@ -19,7 +19,7 @@ quadratic_gc_correction(
 
 \item{intervals_per_bin}{Vector assigning bin to GC interval}
 
-\item{mean.gc.interval}{Mean GC content of each interval}
+\item{mean_gc_interval}{Mean GC content of each interval}
 }
 \description{
 Help function for GC correction per cell, in case that instead of the loess function, 
