@@ -102,6 +102,7 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 ### Version History
 
 * 1.1.0
+    * Added two new filtering options: 1) providing a file with cell barcodes to give the user more flexibility in selecting cells (parameter for filename `selected_cells`) and 2) removing cells that have less or equal a certain percentage of non-zero windows (parameter `threshold_cells_bins`, default <= 5\% non-zero windows)
     * Adding the parameter `gc_correction` and multiple versions of GC correction. Besides the old version `loess`, two faster alternatives are now available, `quadratic` and  `bulk_loess` (explanations in the vignette).
     * Switching the order, first filtering lowly covered regions before applying the GC correction.
     * Adding a file removed_regions.tsv to document which regions were filtered out.

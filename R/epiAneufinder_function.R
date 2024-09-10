@@ -14,6 +14,8 @@
 #' @param title_karyo String. Title of the output karyogram
 #' @param minFrags Integer. Minimum number of reads for a cell to pass. Only required for fragments.tsv file. Default: 20000
 #' @param mapqFilter Filter bam files after a certain mapq value
+#' @param threshold_cells_nbins Keep only cells that have more than a certain percentage of non-zero bins
+#' @param selected_cells Additional option for filtering the input, either NULL or a file with barcodes of cells to keep (one barcode per line, no header)
 #' @param gc_correction Type of GC correction, currently implemented options are "loess", "bulk_loess" and "quadratic".
 #' @param threshold_blacklist_bins Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85
 #' @param ncores Number of cores for parallelization. Default: 4
@@ -46,6 +48,7 @@
 epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL,
                     uq=0.9, lq=0.1, title_karyo=NULL, minFrags = 20000, mapqFilter=10,
+                    threshold_cells_nbins=0.05,selected_cells=NULL,
                     gc_correction="quadratic",threshold_blacklist_bins=0.85,
                     ncores=4, minsize=1, k=4, 
                     minsizeCNV=0,plotKaryo=TRUE){
@@ -108,14 +111,35 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
 
   counts <- readRDS(file.path(outdir,"count_summary.rds"))
   peaks <- as.data.table(assays(counts)$counts)
+  
+
+  # ----------------------------------------------------------------------------
+  # Filtering cells 1) based on barcode file (if provided) and
+  # 2) based on too many zero windows and
+  # 3) filter windows without enough coverage
+  # ----------------------------------------------------------------------------
+  
+  # Filter cells based on a barcode file if provided
+  if(! is.null(selected_cells)){
+    cells_select<-read.table(selected_cells)
+    peaks <- peaks[,cells_select$V1,with=FALSE]
+    
+    message(paste("Filtering cell based on additionally provided barcode file,",
+                ncol(peaks),"cells remain."))
+  }
+
+  # Exclude cells that have no signal in most bins
+  zeroes_per_cell<-colSums(peaks==0)
+  peaks <- peaks[,zeroes_per_cell<((1-threshold_cells_nbins)*nrow(peaks)),with=FALSE]
+  message(paste("Filtering cell without enough covered windows,",
+              ncol(peaks),"cells remain."))
+  
+  # Add row information (window location)
   colnames(peaks) <- paste0('cell-', colnames(peaks))
   rowinfo <- as.data.table(rowRanges(counts))
   peaks <- cbind(rowinfo, peaks)
   
-  # ----------------------------------------------------------------------------
-  # Filtering windows without enough coverage
-  # ----------------------------------------------------------------------------
-  
+  #Exclude bins (=windows) with too little signal
   zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
   ncells <- length(grep("cell-", colnames(peaks)))
   

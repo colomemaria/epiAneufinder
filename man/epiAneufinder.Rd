@@ -18,6 +18,8 @@ epiAneufinder(
   title_karyo = NULL,
   minFrags = 20000,
   mapqFilter = 10,
+  threshold_cells_nbins = 0.05,
+  selected_cells = NULL,
   gc_correction = "quadratic",
   threshold_blacklist_bins = 0.85,
   ncores = 4,
@@ -54,6 +56,10 @@ a count matrix (required files: matrix.mtx(.gz), barcodes.tsv(.gz) and peaks.bed
 \item{minFrags}{Integer. Minimum number of reads for a cell to pass. Only required for fragments.tsv file. Default: 20000}
 
 \item{mapqFilter}{Filter bam files after a certain mapq value}
+
+\item{threshold_cells_nbins}{Keep only cells that have more than a certain percentage of non-zero bins}
+
+\item{selected_cells}{Additional option for filtering the input, either NULL or a file with barcodes of cells to keep (one barcode per line, no header)}
 
 \item{gc_correction}{Type of GC correction, currently implemented options are "loess", "bulk_loess" and "quadratic".}
 
