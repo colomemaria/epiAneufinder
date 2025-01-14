@@ -1,0 +1,29 @@
+name: epianeufinder
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - r
+  - anaconda
+dependencies:
+  - r-base=4.1
+  - r-essentials
+  - r-devtools
+  - r-biocmanager=1.30.16
+  - r-ggdendro=0.1.22
+  - bioconductor-genomicalignments=1.28.0
+  - bioconductor-summarizedexperiment=1.22.0
+  - bioconductor-plyranges
+  - bioconductor-rsamtools=2.8.0
+  - bioconductor-genomeinfodb
+  - bioconductor-bsgenome.hsapiens.ucsc.hg38=1.4.3
+  - bioconductor-genomicranges=1.44.0
+  - bioconductor-biostrings
+  - bioconductor-biocgenerics=0.38.0
+  - bioconductor-s4vectors=0.30.0
+  - bioconductor-genomicfeatures
+  - r-xml
+  - lxml
+  - notebook
+  - nb_conda_kernels
+  - r-irkernel

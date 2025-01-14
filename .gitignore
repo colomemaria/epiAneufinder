@@ -4,3 +4,4 @@
 *.Ruserdata
 *.DS_Store
 vignettes/epiAneufinder_results*
+*.ipynb
