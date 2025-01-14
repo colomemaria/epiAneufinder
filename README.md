@@ -24,11 +24,15 @@ epiAneufinder is an R package
 
 Installation example:  
 *OPTIONAL: Create a conda enviroment and install R and devtools
-```
+```bash
 conda create -n epianeufinder r-base r-essentials
 ```
 1. Start R and install dependencies
+```bash
+conda activate epianeufinder; R
 ```
+In R:
+```R
 install.packages(c("devtools", "BiocManager", "ggdendro"))
 BiocManager::install(c("GenomicAlignments", "SummarizedExperiment", "plyranges", "Rsamtools", "GenomeInfoDb", "BSgenome.Hsapiens.UCSC.hg38", "GenomicRanges", "Biostrings", "BiocGenerics", "S4Vectors", "GenomicFeatures"))
 ```
