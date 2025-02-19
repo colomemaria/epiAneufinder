@@ -12,10 +12,10 @@ getbp <- function(seq_data, minsize=1, k=3, test='AD', minsizeCNV=5){
   for(iter in 1:k) {
     
     #Split the vector on the respective breakpoints into segments
-    seq_k_data <- epiAneufinder::splitAt(seq_data, (bp))
+    seq_k_data <- splitAt(seq_data, (bp))
     
     #Calculate the distance for each possible breakpoint within the segment
-    dist_vect <- lapply(seq_k_data, function(x) {epiAneufinder::seq_dist_ad(x, minsize, test)})
+    dist_vect <- lapply(seq_k_data, function(x) {seq_dist_ad(x, minsize, test)})
     
     if(length(bp)==0){
       add_to_bp <- 0
@@ -44,7 +44,6 @@ getbp <- function(seq_data, minsize=1, k=3, test='AD', minsizeCNV=5){
       break()
     }
   }
-  
   
   if (minsizeCNV!=0){
       bp_ends <- c(1:minsizeCNV, seq(length(seq_data)-minsizeCNV, length(seq_data)))

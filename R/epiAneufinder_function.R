@@ -228,7 +228,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     
     # Discard irrelevant breakpoints
     pruned_result.dt <- lapply(result.dt, function(x){
-      epiAneufinder::threshold_dist_values(x)
+      threshold_dist_values(x)
     })
     message("Successfully discarded irrelevant breakpoints")
     
