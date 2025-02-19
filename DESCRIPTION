@@ -38,6 +38,7 @@ Imports:
     gridExtra,
     parallel,
     ggdendro,
+    RhpcBLASctl,
     R.utils
 Suggests: 
     testthat,

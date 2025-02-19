@@ -16,12 +16,12 @@
 #' @param mapqFilter Filter bam files after a certain mapq value
 #' @param threshold_cells_nbins Keep only cells that have more than a certain percentage of non-zero bins
 #' @param selected_cells Additional option for filtering the input, either NULL or a file with barcodes of cells to keep (one barcode per line, no header)
-#' @param gc_correction Type of GC correction, currently implemented options are "loess", "bulk_loess" and "quadratic".
 #' @param threshold_blacklist_bins Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85
 #' @param ncores Number of cores for parallelization. Default: 4
 #' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
 #' @param k Integer. Find 2^k segments per chromosome
 #' @param minsizeCNV Integer. Number of consecutive bins to constitute a possible CNV
+#' @param save_removed_regions Option to save regions that were filtered out in a file removed_regions.tsv.
 #' @param plotKaryo Boolean variable. Whether the final karyogram is plotted at the end
 #' @import stats
 #' @import GenomicRanges
@@ -49,9 +49,10 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
                     test='AD', reuse.existing=FALSE, exclude=NULL,
                     uq=0.9, lq=0.1, title_karyo=NULL, minFrags = 20000, mapqFilter=10,
                     threshold_cells_nbins=0.05,selected_cells=NULL,
-                    gc_correction="quadratic",threshold_blacklist_bins=0.85,
+                    threshold_blacklist_bins=0.85,
                     ncores=4, minsize=1, k=4, 
-                    minsizeCNV=0,plotKaryo=TRUE){
+                    minsizeCNV=0,save_removed_regions=FALSE,
+                    plotKaryo=TRUE){
 
   outdir <- file.path(outdir, "epiAneufinder_results")
   dir.create(outdir,recursive=TRUE)
@@ -61,6 +62,11 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     file.remove(list.files(outdir, full.names=TRUE))
   }
 
+  #Restrict the number of cores inside BLAS and data table
+  RhpcBLASctl::blas_set_num_threads(1)
+  RhpcBLASctl::omp_set_num_threads(1)
+  data.table::setDTthreads(1)
+  
   # ----------------------------------------------------------------------------
   # Creating the count matrix
   # ----------------------------------------------------------------------------
@@ -112,7 +118,6 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   counts <- readRDS(file.path(outdir,"count_summary.rds"))
   peaks <- as.data.table(assays(counts)$counts)
   
-
   # ----------------------------------------------------------------------------
   # Filtering cells 1) based on barcode file (if provided) and
   # 2) based on too many zero windows and
@@ -144,11 +149,13 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   ncells <- length(grep("cell-", colnames(peaks)))
   
   # Save which bins will be removed in the next step as a separate file
-  write.table(file=file.path(outdir,"removed_regions.tsv"),
-              peaks[zeroes_per_bin>=(threshold_blacklist_bins*ncells),
-                    c("seqnames","start","end")],
-              sep="\t",quote=FALSE,row.names=FALSE)
-  
+  if(save_removed_regions){
+    write.table(file=file.path(outdir,"removed_regions.tsv"),
+                peaks[zeroes_per_bin>=(threshold_blacklist_bins*ncells),
+                      c("seqnames","start","end")],
+                sep="\t",quote=FALSE,row.names=FALSE)
+  }
+
   # Exclude bins that have no signal in most cells
   peaks <- peaks[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
   rowinfo<-rowinfo[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
@@ -161,67 +168,21 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   # ----------------------------------------------------------------------------
   # GC correction
   # ----------------------------------------------------------------------------
+    
+  if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
+    
+    message("Correcting for GC bias using a LOESS fit ...")
+    
+    corrected_counts <- peaks[, mclapply(.SD, function(x) {
+      # LOESS correction for GC
+      fit <- stats::loess(x ~ peaks$GC)
+      correction <- mean(x) / fit$fitted
+      as.integer(round(x * correction))
+    }, mc.cores = ncores), .SDcols = patterns("cell-")]
+    saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
   
-  if (gc_correction == "loess") {
-    
-    if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
-      
-      message("Correcting for GC bias using a LOESS fit ...")
-      
-      corrected_counts <- peaks[, mclapply(.SD, function(x) {
-        # LOESS correction for GC
-        fit <- stats::loess(x ~ peaks$GC)
-        correction <- mean(x) / fit$fitted
-        as.integer(round(x * correction))
-      }, mc.cores = ncores), .SDcols = patterns("cell-")]
-      saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
-    
-    } 
-
-  } else if (gc_correction == "bulk_loess") {
-    
-    if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
-      
-      message("Correcting for GC bias using a LOESS fit based on pseudobulk aggregate ...")
-      
-      #create pseudobulk aggregate and get loess fit for that
-      count_matrix<-as.matrix(peaks[, grepl("cell-", colnames(peaks)), with = FALSE])
-      summarizedCounts <- matrixStats::rowMedians(count_matrix)
-      fit <- stats::loess(summarizedCounts ~ peaks$GC)
-      
-      #Correct each cell with the LOESS factor
-      corrected_counts <- t(t(count_matrix) * colMeans(count_matrix)) / fit$fitted
-      
-      #Convert it to an integer matrix again
-      mode(corrected_counts)<-"integer"
-      
-      saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
-    } 
-    
-  } else if (gc_correction == "quadratic") {
-    
-    if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
-      
-      message("Correcting for GC bias with a binned quadratic polynomial ...")
-      
-      #Create a standard assignment of bins to GC interval
-      gc.categories <- seq(from=0, to=1, length=21)
-      mean.gc.interval<-(gc.categories[-length(gc.categories)]+gc.categories[-1])/2
-      intervals.per.bin <- findInterval(peaks$GC, gc.categories)
-      
-      corrected_counts <- peaks[, mclapply(.SD, function(x){
-        quadratic_gc_correction(x,peaks$GC,intervals.per.bin,mean.gc.interval)}, 
-        mc.cores = ncores), 
-        .SDcols = patterns("cell-")]
-      
-      saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
-    } 
-    
-  } else {
-    stop (paste0("Type of GC correction not known! Only implemented options ",
-                 "are \"loess\", \"bulk_loss\" and \"quadratic\"."))
-  }
-
+  } 
+  
   # ----------------------------------------------------------------------------
   # Estimating breakpoints
   # ----------------------------------------------------------------------------
@@ -238,6 +199,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       results <- lapply(peaksperchrom, function(x2) {
         getbp(x2, k = k, minsize = minsize, test=test,minsizeCNV=minsizeCNV)
       })
+      return(results)
     }, mc.cores = ncores), .SDcols = patterns("cell-")]
     saveRDS(clusters_ad, file.path(outdir, "results_gc_corrected.rds"))
   }
@@ -266,10 +228,10 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     
     # Discard irrelevant breakpoints
     pruned_result.dt <- lapply(result.dt, function(x){
-      threshold_dist_values(x)
+      epiAneufinder::threshold_dist_values(x)
     })
     message("Successfully discarded irrelevant breakpoints")
-
+    
     clusters_pruned <- as.data.table(Map(function(seq_data, bp){
       # Split the readcounts into the different chr
       per_chrom_seq_data <- split(seq_data, peaks$seqnames)
