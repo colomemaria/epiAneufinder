@@ -14,6 +14,8 @@ The algorithm works in three steps:
 2. Genome segmentation based on maximum Anderson-Darling distance
 3. Gain/loss assignments
 
+**Remark:** The GC correction step has currently performance issues on large datasets. We are working on a more efficient solution here and keep you updated!
+
 ### Getting Started
 
 epiAneufinder is an R package
@@ -22,11 +24,15 @@ epiAneufinder is an R package
 
 Installation example:  
 *OPTIONAL: Create a conda enviroment and install R and devtools
-```
+```bash
 conda create -n epianeufinder r-base r-essentials
 ```
 1. Start R and install dependencies
+```bash
+conda activate epianeufinder; R
 ```
+In R:
+```R
 install.packages(c("devtools", "BiocManager", "ggdendro"))
 BiocManager::install(c("GenomicAlignments", "SummarizedExperiment", "plyranges", "Rsamtools", "GenomeInfoDb", "BSgenome.Hsapiens.UCSC.hg38", "GenomicRanges", "Biostrings", "BiocGenerics", "S4Vectors", "GenomicFeatures"))
 ```
@@ -87,7 +93,7 @@ Contributors names and contact info
 
 Akshaya Ramakrishnan (akshaya4r@gmail.com)
 
-Aikaterini Symeonidi (asymeonidi@bmc.me.lmu.de and ksymeonidh@gmail.com) 
+Aikaterini Symeonidi (asymeonidi@bmc.med.lmu.de and ksymeonidh@gmail.com) 
 
 Patrick Hanel (patrick.hanel@helmholtz-muenchen.de) 
 
