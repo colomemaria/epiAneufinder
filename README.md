@@ -14,7 +14,7 @@ The algorithm works in three steps:
 2. Genome segmentation based on maximum Anderson-Darling distance
 3. Gain/loss assignments
 
-**Remark:** The GC correction step has currently performance issues on large datasets. We are working on a more efficient solution here and keep you updated!
+**Remark:** We improved the implementation of the multi-threading, so that the runtime compared to the previous versions should improve now considerably!
 
 ### Getting Started
 
@@ -111,7 +111,7 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
     * Fixed problem with multi-threading that caused runtime problems in the GC correction and AD calculation.
     * Added two new filtering options: 1) providing a file with cell barcodes to give the user more flexibility in selecting cells (parameter for filename `selected_cells`) and 2) removing cells that have less or equal a certain percentage of non-zero windows (parameter `threshold_cells_bins`, default <= 5\% non-zero windows)
     * Switching the order, first filtering lowly covered regions before applying the GC correction.
-    * Added the option to save regions that were filtered out in a file removed_regions.tsv (called `rsave_removed_regions`, default `FALSE`).
+    * Added the option to save regions that were filtered out in a file removed_regions.tsv (called `save_removed_regions`, default `FALSE`).
 
 * 1.0.3
     * Added the option to start the algorithm directly from a count matrix (Warning: performance might drop compared to bam/fragment files, see vignette)
