@@ -43,3 +43,29 @@ assign_gainloss <- function(seq_data, cluster, uq=0.9, lq=0.1) {
   return(CN.states)
 }
 
+
+#' Assign CNV quant call
+#' 
+#' @param seq_data Sequential data - Counts per bin
+#' @param cluster Vector showing segment identity
+#' @param uq Upper quantile to trim to calculate the cluster means
+#' @param lq Lower quantile to trim to calculate the cluster means
+#' @return Copy number states for the different segments
+#' @export
+assign_quantitative <- function(seq_data, cluster, uq=0.9, lq=0.1) {
+  counts.normal <- seq_data / mean(seq_data)
+  counts.normal[counts.normal<0] <- 0
+  qus_global <- quantile(seq_data, c(0.01, 0.98))
+  #Calculate mean read counts per cluster
+  cnmean <- sapply(split(counts.normal,cluster), function(x) {
+    qus <- quantile(x, c(lq, uq))
+    y <- x[x >= qus[1] & x <= qus[2] & x >= qus_global[1] & x <= qus_global[2]]
+    if(sum(y) == 0 | length(y) == 0)
+      y <- x
+    mean(y)
+  })
+  #Calculate Z-scores
+  z.scores <- (cnmean - mean(cnmean)) / sd(cnmean) #same as scale(cnmean)
+  CN.score <- z.scores[as.character(cluster)]
+  return(CN.score)
+}

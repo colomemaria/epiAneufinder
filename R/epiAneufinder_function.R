@@ -15,11 +15,12 @@
 #' @param minFrags Integer. Minimum number of reads for a cell to pass. Only required for fragments.tsv file. Default: 20000
 #' @param mapqFilter Filter bam files after a certain mapq value
 #' @param threshold_cells_nbins Keep only cells that have more than a certain percentage of non-zero bins
-#' @param selected_cells Additional option for filtering the input, either NULL or a file with barcodes of cells to keep (one barcode per line, no header)
+#' @param selected_cells Additional option for filtering the input, either NULL or a vector of barcodes of cells to keep
 #' @param threshold_blacklist_bins Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85
 #' @param ncores Number of cores for parallelization. Default: 4
 #' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
 #' @param k Integer. Find 2^k segments per chromosome
+#' @param doubleSexChromosomes Double the values of chrX and chrY. Default = false
 #' @param minsizeCNV Integer. Number of consecutive bins to constitute a possible CNV
 #' @param save_removed_regions Option to save regions that were filtered out in a file removed_regions.tsv.
 #' @param plotKaryo Boolean variable. Whether the final karyogram is plotted at the end
@@ -51,6 +52,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
                     threshold_cells_nbins=0.05,selected_cells=NULL,
                     threshold_blacklist_bins=0.85,
                     ncores=4, minsize=1, k=4, 
+                    doubleSexChromosomes=FALSE,
                     minsizeCNV=0,save_removed_regions=FALSE,
                     plotKaryo=TRUE){
 
@@ -110,6 +112,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       stop("The created count matrix is empty. Please check input files and filtering options.")
     }
     
+    
     message(paste("Count matrix with",ncol(counts),"cells and",nrow(counts),"windows",
                 "has been generated and will be saved as count_summary.rds"))
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
@@ -124,12 +127,14 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   # 3) filter windows without enough coverage
   # ----------------------------------------------------------------------------
   
-  # Filter cells based on a barcode file if provided
+  # Filter cells based on a barcode list if provided
   if(! is.null(selected_cells)){
-    cells_select<-read.table(selected_cells)
-    peaks <- peaks[,cells_select$V1,with=FALSE]
+    cells_select<-selected_cells
+    peaks <- peaks[,cells_select,with=FALSE]
+    #cells_select<-read.table(selected_cells)
+    #peaks <- peaks[,cells_select$V1,with=FALSE]
     
-    message(paste("Filtering cell based on additionally provided barcode file,",
+    message(paste("Filtering cell based on additionally provided barcodes,",
                 ncol(peaks),"cells remain."))
   }
 
@@ -147,6 +152,14 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   #Exclude bins (=windows) with too little signal
   zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
   ncells <- length(grep("cell-", colnames(peaks)))
+  
+  #Optionally multiply values on sex chromosomes by 2
+  #to adjust for having only 1 copy in males
+  if(doubleSexChromosomes) {
+    peaks[which(peaks$seqnames %in% c('chrX','chrY')),
+          13:ncol(peaks)] <- peaks[which(peaks$seqnames %in% c('chrX','chrY')),
+                                   13:ncol(peaks)] * 2
+  }
   
   # Save which bins will be removed in the next step as a separate file
   if(save_removed_regions){
@@ -264,6 +277,13 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
     message("Successfully assigned gain-loss")
     saveRDS(somies_ad, file.path(outdir, "cnv_calls.rds"))
+    
+    # Assign copy number states to the different "clusters"/segments identified
+    quant_ad <- Map(function(seq_data,cluster) {
+      assign_quantitative(seq_data, cluster, uq=uq, lq=lq)
+    }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
+    message("Successfully assigned gain-loss")
+    saveRDS(somies_ad, file.path(outdir, "quant.cnv_calls.rds"))   
   }
   
   somies_ad <- readRDS(file.path(outdir,"cnv_calls.rds"))
@@ -280,6 +300,11 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   message("A .tsv file with the results has been written to disk. 
           It contains the copy number states for each cell per bin.
           0 denotes 'Loss', 1 denotes 'Normal', 2 denotes 'Gain'.")
+
+  quant_ad <- readRDS(file.path(outdir, "quant.cnv_calls.rds"))
+  write_quant.dt <- as.data.table(quant_ad)
+  write_quant.dt <- as.data.table(cbind(seq=peaks$seqnames, start=peaks$start, end=peaks$end, write_quant.dt))
+  write.table(write_quant.dt, file = file.path(outdir, "quant.results_table.tsv"), quote = FALSE)
   
   # ----------------------------------------------------------------------------
   # Plotting the result karyogram
