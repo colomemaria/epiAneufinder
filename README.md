@@ -107,6 +107,9 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 ### Version History
 
+* 1.1.1
+    *  Improved the 'selected_cells' parameter to work also when the named cells were filtered out before.
+
 * 1.1.0
     * Fixed problem with multi-threading that caused runtime problems in the GC correction and AD calculation.
     * Added two new filtering options: 1) providing a file with cell barcodes to give the user more flexibility in selecting cells (parameter for filename `selected_cells`) and 2) removing cells that have less or equal a certain percentage of non-zero windows (parameter `threshold_cells_bins`, default <= 5\% non-zero windows)

@@ -127,6 +127,10 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
   # Filter cells based on a barcode file if provided
   if(! is.null(selected_cells)){
     cells_select<-read.table(selected_cells)
+    
+    #Filter for cells which are in the count matrix
+    cells_select<-cells_select[cells_select$V1 %in% colnames(peaks),,drop=FALSE]
+    
     peaks <- peaks[,cells_select$V1,with=FALSE]
     
     message(paste("Filtering cell based on additionally provided barcode file,",
