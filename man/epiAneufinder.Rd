@@ -26,6 +26,7 @@ epiAneufinder(
   k = 4,
   minsizeCNV = 0,
   save_removed_regions = FALSE,
+  gc_correction = TRUE,
   plotKaryo = TRUE
 )
 }
@@ -71,7 +72,9 @@ a count matrix (required files: matrix.mtx(.gz), barcodes.tsv(.gz) and peaks.bed
 
 \item{minsizeCNV}{Integer. Number of consecutive bins to constitute a possible CNV}
 
-\item{save_removed_regions}{Option to save regions that were filtered out in a file removed_regions.tsv.}
+\item{save_removed_regions}{Boolean variable. Option to save regions that were filtered out in a file removed_regions.tsv.}
+
+\item{gc_correction}{Boolean variable. Option to perform GC correction. Strongly advised to set to TRUE unless the input matrix is already GC corrected!!!}
 
 \item{plotKaryo}{Boolean variable. Whether the final karyogram is plotted at the end}
 }

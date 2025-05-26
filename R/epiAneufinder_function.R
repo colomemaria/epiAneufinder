@@ -21,7 +21,8 @@
 #' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
 #' @param k Integer. Find 2^k segments per chromosome
 #' @param minsizeCNV Integer. Number of consecutive bins to constitute a possible CNV
-#' @param save_removed_regions Option to save regions that were filtered out in a file removed_regions.tsv.
+#' @param save_removed_regions Boolean variable. Option to save regions that were filtered out in a file removed_regions.tsv.
+#' @param gc_correction Boolean variable. Option to perform GC correction. Strongly advised to set to TRUE unless the input matrix is already GC corrected!!!
 #' @param plotKaryo Boolean variable. Whether the final karyogram is plotted at the end
 #' @import stats
 #' @import GenomicRanges
@@ -51,7 +52,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
                     threshold_cells_nbins=0.05,selected_cells=NULL,
                     threshold_blacklist_bins=0.85,
                     ncores=4, minsize=1, k=4, 
-                    minsizeCNV=0,save_removed_regions=FALSE,
+                    minsizeCNV=0,save_removed_regions=FALSE,gc_correction=TRUE,
                     plotKaryo=TRUE){
 
   outdir <- file.path(outdir, "epiAneufinder_results")
@@ -175,14 +176,23 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
     
   if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
     
-    message("Correcting for GC bias using a LOESS fit ...")
-    
-    corrected_counts <- peaks[, mclapply(.SD, function(x) {
-      # LOESS correction for GC
-      fit <- stats::loess(x ~ peaks$GC)
-      correction <- mean(x) / fit$fitted
-      as.integer(round(x * correction))
-    }, mc.cores = ncores), .SDcols = patterns("cell-")]
+    if(gc_correction){
+      
+      message("Correcting for GC bias using a LOESS fit ...")
+      
+      corrected_counts <- peaks[, mclapply(.SD, function(x) {
+        # LOESS correction for GC
+        fit <- stats::loess(x ~ peaks$GC)
+        correction <- mean(x) / fit$fitted
+        as.integer(round(x * correction))
+      }, mc.cores = ncores), .SDcols = patterns("cell-")]
+    } else {
+      
+      message("Warning: skipping the GC correction!")
+      
+      corrected_counts <- peaks[,.SD,.SDcols = patterns("cell-")]
+    }
+
     saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
   
   } 
