@@ -108,7 +108,7 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 ### Version History
 
 * 1.1.2
-    *  Added the boolean parameter `gc_correction` (default TRUE) whether GC correction should be performed. We recommend strongly to run the GC correction (improves performance considerable). This option is implemented for the cases when the input count matrix was already before GC corrected.
+    *  Added the boolean parameter `gc_correction` (default TRUE) whether GC correction should be performed. We recommend strongly to run the GC correction (improves performance considerable). This option is implemented for the cases when the input count matrix was already GC corrected before.
 
 * 1.1.1
     *  Improved the `selected_cells` parameter to work also when the named cells were filtered out before.
