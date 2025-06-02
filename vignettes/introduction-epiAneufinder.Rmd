@@ -123,6 +123,37 @@ plot_karyo_annotated(res_table=res_table,
 
 ![Result karyogram with annotation](plots/karyo_annotated.png){width=100%}
 
+### Aneuploidy scores and heterogeneity scores
+
+The resulting CNVs (i.e. the karyogram) can be characterised based on the
+aneuploidy and heterogeneity score, both implemented in the epiAneufinder function `karyotype_measures()`. Given a CNV result matrix with $N$ cells and $T$ bins and each entry being the CNV status $c_{i,j}$ for cell $i$ and bin $j$, the metrics are defined as:
+
+* **Aneuploidy**: the mean deviation from the baseline value b (default $b=1$), i.e. how many bins are gained or lost per cell
+
+\[
+H = \frac{1}{T * N} \sum_{n=1}^{N} \sum_{t=1}^{T} |c_{n,t} - b|
+\]
+
+* **Heterogeneity**: the mean heterogeneity for a bin across cells, i.e. how different is the CNV status across cells for the same bin. For this, across each bin, the frequenies for each CNV status f is estimated as $m_f$ and then ordered decreasing so that $m_{0,t} >= m_{1,t}  >= m_{2,t}$
+
+\[
+H = \frac{1}{T * N} \sum_{t=1}^{T} \sum_{f=0}^{S} f * m_{f,t}
+\]
+
+
+Both metrics are implemented genome-wide and per chromosome.
+
+```{r}
+
+res_table<-read.table("epiAneufinder_results/epiAneufinder_results/results_table.tsv")
+metrics<-karyotype_measures(res_table)
+
+metrics$genomewide
+
+head(metrics$per_chromosome)
+
+```
+
 ### Read profile for individual cells
 
 The predictions of epiAneufinder on individual cells can be further explored by
