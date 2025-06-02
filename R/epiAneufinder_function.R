@@ -52,7 +52,8 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
                     threshold_blacklist_bins=0.85,
                     ncores=4, minsize=1, k=4, 
                     minsizeCNV=0,save_removed_regions=FALSE,
-                    plotKaryo=TRUE){
+                    plotKaryo=TRUE,
+                    mean_shrinking=FALSE,trimmed_mean=TRUE){
 
   outdir <- file.path(outdir, "epiAneufinder_results")
   dir.create(outdir,recursive=TRUE)
@@ -262,11 +263,23 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       return(clusters)
     },  peaks[, .SD, .SDcols = patterns("cell-")], pruned_result.dt))
 
+
     # Assign copy number states to the different "clusters"/segments identified
-    somies_ad <- Map(function(seq_data,cluster) {
-      assign_gainloss(seq_data, cluster, uq=uq, lq=lq)
+    fc_cells <- Map(function(seq_data,cluster) {
+      estimate_foldchange(seq_data, cluster, uq=uq, lq=lq,
+                          mean_shrinking = mean_shrinking,
+                          trimmed_mean = trimmed_mean)
     }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
-    message("Successfully assigned gain-loss")
+    message("Successfully estimated fold changes")
+    saveRDS(fc_cells, file.path(outdir, "fold_change.rds"))
+    
+    
+    # Assign copy numbers
+    somies_ad<-lapply(fc_cells,function(cnmean.scaled){
+      cnmean.scaled[cnmean.scaled > 2] <- 2
+      return(round(cnmean.scaled))
+    })
+    message("Transform fold changes to somies")
     saveRDS(somies_ad, file.path(outdir, "cnv_calls.rds"))
   }
   
