@@ -107,6 +107,10 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 ### Version History
 
+* 1.1.4
+    * Added parameters to `karyotype_measures` to optional create a scatterplot of aneuploidy vs heterogeneity per chromosome
+    * Calculate the CNV burden (=aneuploidy) per cell with the function `cnv_burden_per_cell`
+
 * 1.1.3
     * Added the function `karyotype_measures` to calculate aneuploidy and heterogeneity scores of the result karyograms (see vignette).
     
