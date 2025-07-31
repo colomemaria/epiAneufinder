@@ -7,6 +7,8 @@ Ramakrishnan, A., Symeonidi, A., Hanel, P. et al. epiAneufinder identifies copy 
 
 All additional scripts used for the publication can be found here https://github.com/colomemaria/epiAneufinder_analyses.git
 
+**Python version:**  We are currently developing a python version of epiAneufinder, which is still in beta-testing. Feel free to explore it and report any improvement suggestions and issues on the related GitHub: https://github.com/colomemaria/pyEpiAneufinder
+
 ### Description
 
 The algorithm works in three steps:
