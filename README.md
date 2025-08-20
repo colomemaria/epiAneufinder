@@ -7,6 +7,8 @@ Ramakrishnan, A., Symeonidi, A., Hanel, P. et al. epiAneufinder identifies copy 
 
 All additional scripts used for the publication can be found here https://github.com/colomemaria/epiAneufinder_analyses.git
 
+**Python version:**  We are currently developing a python version of epiAneufinder, which is still in beta-testing. Feel free to explore it and report any improvement suggestions and issues on the related GitHub: https://github.com/colomemaria/pyEpiAneufinder
+
 ### Description
 
 The algorithm works in three steps:
@@ -106,6 +108,16 @@ Michael Schubert
 Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 ### Version History
+
+* 1.1.4
+    * Added parameters to `karyotype_measures` to optional create a scatterplot of aneuploidy vs heterogeneity per chromosome
+    * Calculate the CNV burden (=aneuploidy) per cell with the function `cnv_burden_per_cell`
+
+* 1.1.3
+    * Added the function `karyotype_measures` to calculate aneuploidy and heterogeneity scores of the result karyograms (see vignette).
+    
+* 1.1.2
+    *  Added the boolean parameter `gc_correction` (default TRUE) whether GC correction should be performed. We recommend strongly to run the GC correction (improves performance considerable). This option is implemented for the cases when the input count matrix was already GC corrected before.
 
 * 1.1.1
     *  Improved the `selected_cells` parameter to work also when the named cells were filtered out before.
