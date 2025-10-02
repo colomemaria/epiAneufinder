@@ -154,6 +154,20 @@ head(metrics$per_chromosome)
 
 ```
 
+### CNV burden per cell
+
+Based on the same formular, the aneuploidy score per cell, also called CNV burden, can be estimated. This score per cell can be used as an additional criterion to identify tumor cells besides marker gene expression.
+
+```{r,fig.height=3,fig.width=5}
+
+res_table<-read.table("epiAneufinder_results/epiAneufinder_results/results_table.tsv")
+cnv_burden_cell <-cnv_burden_per_cell(res_table)
+
+hist(cnv_burden_cell)
+
+```
+
+
 ### Read profile for individual cells
 
 The predictions of epiAneufinder on individual cells can be further explored by
