@@ -93,7 +93,9 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
       if(grepl("\\.tsv$|\\.tsv.gz$", input)){
         message("Obtaining the fragments tsv file")
         file_fragments <- fread(input)
-        colnames(file_fragments) <- c('seqnames','start','end','barcode','pcr')
+        # fix for more recent Cellranger-ATAC fragments.tsv.gz files:
+        columns <- c('seqnames','start','end','barcode','pcr','strand')
+        colnames(file_fragments) <- columns[seq_len(ncol(file_fragments))]
         fragments <- as_granges(file_fragments)
         #print(head(fragments))
       } else if(grepl("\\.bed$", input)){
