@@ -109,6 +109,9 @@ Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
 
 ### Version History
 
+* 1.1.5
+    * Adapted function to read also fragment files from the new 10X version (with a 6th column)
+
 * 1.1.4
     * Added parameters to `karyotype_measures` to optional create a scatterplot of aneuploidy vs heterogeneity per chromosome
     * Calculate the CNV burden (=aneuploidy) per cell with the function `cnv_burden_per_cell`
