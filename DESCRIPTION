@@ -4,11 +4,11 @@ Title: Calling copy numbers from scATAC-seq data
 Version: 1.1.5
 Authors@R: c(person('Akshaya', 'Ramakrishnan', NULL, 'akshaya4r@gmail.com', c('cre', 'aut')),
              person('Aikaterini', 'Symeonidi', NULL, 'aikaterini.symeonidi@helmholtz-muenchen.de', 'aut'),
-             person('Patrick', 'Hanel', NULL, 'patrick.hanel@helmholtz-muenchen.de', 'aut'),
+             person('Patrick', 'Hanel', NULL, NULL, 'aut'),
              person('Katharina', 'Schmid', NULL, 'katharina.schmid@bmc.med.lmu.de', 'aut'),
              person('Maria', 'Richter', NULL, 'maria.richter@bmc.med.lmu.de', 'aut'),
              person('Michael', 'Schubert', NULL, NULL, 'aut'),
-             person('Maria', 'Colomé-Tatché', NULL, 'maria.colome@helmholtz-muenchen.de', 'aut'))
+             person('Maria', 'Colomé-Tatché', NULL, 'maria.colome@bmc.med.lmu.de', 'aut'))
 Description: Package to detect breakpoints and assign somies to scATAC-seq data.
 License: GPL-3
 VignetteBuilder: knitr, rmarkdown
