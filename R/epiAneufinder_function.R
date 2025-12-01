@@ -187,7 +187,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
         fit <- stats::loess(x ~ peaks$GC)
         correction <- mean(x) / fit$fitted
         as.integer(round(x * correction))
-      }, mc.cores = ncores), .SDcols = patterns("cell-")]
+      }, mc.cores = ncores, mc.preschedule = FALSE), .SDcols = patterns("cell-")]
     } else {
       
       message("Warning: skipping the GC correction!")
@@ -216,7 +216,7 @@ epiAneufinder <- function(input, outdir, blacklist, windowSize, genome="BSgenome
         getbp(x2, k = k, minsize = minsize, test=test,minsizeCNV=minsizeCNV)
       })
       return(results)
-    }, mc.cores = ncores), .SDcols = patterns("cell-")]
+    }, mc.cores = ncores, mc.preschedule = FALSE), .SDcols = patterns("cell-")]
     saveRDS(clusters_ad, file.path(outdir, "results_gc_corrected.rds"))
   }
   message("Successfully identified breakpoints")
