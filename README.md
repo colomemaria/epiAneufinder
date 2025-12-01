@@ -105,7 +105,7 @@ Maria Richter (maria.richter@bmc.med.lmu.de)
 
 Michael Schubert  
 
-Maria Colomé-Tatché (maria.colome@helmholtz-muenchen.de)
+Maria Colomé-Tatché (maria.colome@bmc.med.lmu.de)
 
 ### Version History
 
